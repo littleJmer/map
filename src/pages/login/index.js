@@ -1,7 +1,18 @@
 import React, { Component } from "react";
 
+import { connect } from 'react-redux'
 
 class Login extends Component {
+
+	constructor(props) {
+		super(props)
+
+		console.log(props);
+
+		if (props.authenticated) {
+			props.history.push({ pathname: '/app' });
+		}
+	}
 
 	render() {
 		return(
@@ -13,5 +24,14 @@ class Login extends Component {
 
 }
 
-export default Login;
+const mapStateToProps = (state, ownProps) => ({
+	authenticated: state.auth.authenticated,
+})
+
+const mapDispatchToProps = null;
+
+export default connect(
+	mapStateToProps,
+	mapDispatchToProps
+)(Login)
 
