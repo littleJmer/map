@@ -4,7 +4,11 @@
 
 import React, {Component} from "react";
 
+import { Redirect } from "react-router-dom";
+
 import { connect } from 'react-redux'
+
+import axios from 'axios';
 
 import {
 	Grid,
@@ -28,6 +32,8 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Maps from '../../components/googleMaps';
 
+import * as actions from '../../actions/auth.js';
+
 const styles = theme => ({
 	root: {
 		flexGrow: 1,
@@ -45,28 +51,250 @@ const styles = theme => ({
 	},
 });
 
+
+
 class App extends Component {
 
 	constructor(props) {
 		super(props)
-
-		if (!props.authenticated) {
-			props.history.push({ pathname: '/' });
-		}
 
 		this.state = {
 			page: '',
 			post: '',
 			tab: 0,
 			anchorEl: null,
+			paginas : [],
+			publicaciones : [],
+			reacciones : [],
+			lat : '',
+			long : '',
+			zoom : '',
+			kmz : 'distritos.kmz',
 		};
 
 		this._handleChangeSelect = this._handleChangeSelect.bind(this);
 		this._handleChangeTab = this._handleChangeTab.bind(this);
 	}
 
+	componentDidMount() {
+
+       this.paginas();
+    
+
+    }
+
+    paginas () {
+    	 let urlfb = 'https://graph.facebook.com/v3.0/me';
+        let token = 'EAACEdEose0cBAKGg3WRAKRKqdXL18h8rQ3BXKMZCcBOVKZBgyhSeGDlGVpNVAvaZAOWqZCweZCuza6ZA4ZBvv9b8PeJ22vgHtCOYuJh3CSkl446lAj55YqBYIRZCy5uZBO84vMjwOIgZBZAGB0HavEtPULFpDbN03iUFySIWWCUdVbEEjzpTSLZBAlq4BEtQLEhqA1t1FvPmjMiLQwZDZD';
+        let consulta = '?fields=accounts%7Bname%2Caccess_token%7D&access_token=';
+        let paginas = [];
+        let _self = this;
+        axios.get(urlfb+consulta+token)
+        .then(response => {
+             response.data.accounts.data.some(function(obj) {
+                    paginas.push({
+                        
+                        value : obj.id,
+                        label : obj.name,
+                        token : obj.access_token,
+                        publicaciones : [],
+
+
+                    });
+                                     
+                });
+             	 _self.setState({
+		            paginas : paginas,
+		        }); 
+             // 	 paginas.some(function(obj,index){
+            	// 	console.log(index);
+            	// 	_self.publicaciones(obj.token,obj.value, index)
+            	// });  
+            });
+
+            //get publicaciones 
+
+
+
+    }
+
+    // publicaciones(token_page , id_page , index ){
+
+    // 	let urlfb = 'https://graph.facebook.com/v3.0/'+id_page+'?fields=feed.limit(5)&access_token=';
+    // 	let {paginas} = this.state;
+    // 	let token = token_page;
+    // 	let _self = this;
+    // 	let publicaciones = [];
+    // 	axios.get(urlfb+token)
+    //     .then(response => {
+    //         console.log(response)
+    //          response.data.feed.data.some(function(obj) {
+    //                 publicaciones.push({
+                        
+    //                     value : obj.id,
+    //                     label : obj.message,
+    //                     access_token : token_page,
+    //                     reacciones : []
+
+
+    //                 });
+
+    //             paginas[index].publicaciones = publicaciones;    
+    //                 _self.setState({
+    //                     paginas : paginas,
+    //                 }); 
+                                     
+    //             });
+
+				// paginas.some(function(obj, index){
+				// 	let page_index = index;
+				//     obj.publicaciones.some(function(obj, index){
+				//     	_self.reacciones=(obj.value,obj.access_token, page_index);
+				//     });
+				// });
+    //         });
+
+    // }
+
+    reacciones(idPublicacion, access_token_page, index, index_page){
+        let reacciones = [];
+        let {paginas} = this.state;
+        let self = this;
+        let query = "?fields=reactions.type(LIKE).limit(0).summary(total_count).as(LIKE)%2Creactions.type(LOVE).limit(0).summary(total_count).as(LOVE)%2Creactions.type(SAD).limit(0).summary(total_count).as(SAD)%2Creactions.type(WOW).limit(0).summary(total_count).as(WOW)%2Creactions.type(ANGRY).limit(0).summary(total_count).as(ANGRY)%2Creactions.type(HAHA).limit(0).summary(total_count).as(HAHA)";
+        let url_fb = "https://graph.facebook.com/v3.0/"
+        let access_token = "&access_token="+access_token_page;
+        
+        axios.get(url_fb+idPublicacion+query+access_token)
+        .then(response => {
+ 
+            reacciones.push({
+                
+                angry : response.data.ANGRY.summary.total_count,
+                haha : response.data.HAHA.summary.total_count,
+                love : response.data.LOVE.summary.total_count,
+                like : response.data.LIKE.summary.total_count,
+                sad : response.data.SAD.summary.total_count,
+                wow : response.data.WOW.summary.total_count,
+
+
+            });
+
+            paginas[index_page].publicaciones[index].reacciones = reacciones;
+            self.setState({
+                paginas : paginas,
+            }); 
+
+
+            });
+
+    }
+
 	_handleChangeSelect(e) {
+		
+
+		let {paginas} = this.state;
+		let index = e.target.value;
+		let token = paginas[index].token;
+		let id_page = paginas[index].value;
+		let publicaciones = [];
+		let self = this;
+
+		let urlfb = 'https://graph.facebook.com/v3.0/'+id_page+'?fields=feed&access_token=';
+
+        axios.get(urlfb+token)
+        .then(response => {
+            
+             response.data.feed.data.some(function(obj) {
+             	if(obj.message)
+                    publicaciones.push({
+                        
+                        value : obj.id,
+                        label : obj.message.substring(0,35)+"...",
+                        token : obj.access_token,
+
+
+                    });
+
+                    self.setState({
+                        publicaciones : publicaciones,
+                    }); 
+                              
+                });
+
+
+            });
+        this.coordenadas(id_page);
+		
 		this.setState({ [e.target.name]: e.target.value });
+	}
+
+
+	coordenadas(id){
+		switch(id){
+			//Viancca Barreto
+			case  "1627463167374165":
+					this.setState({
+                    lat : 32.493699,
+                    long : -116.959654,
+                    zoom : 12,
+                    kmz : 'secciones',
+                });
+				break;
+			//Celestino Salcedo Flores
+			case  "1670414819732611":
+				this.setState({
+                    lat : 32.619812,
+                    long : -115.456473,
+                    zoom : 12,
+                    kmz : 'secciones',
+                });
+				break;
+			//Mario Madrigal
+			case  "411052376013391":
+				this.setState({
+                    lat : 32.461746,
+                    long : -117.043863,
+                    zoom : 12,
+                    kmz : 'secciones',
+                });
+				break;
+			//Adriana Lopez Quintero
+			case "1277594875598974":
+				this.setState({
+                    lat : 32.155425,
+                    long : -116.133693,
+                    zoom : 8,
+                    kmz : 'secciones',              
+ 				});
+				break;
+			// /Erika Santana
+			case "496428537221963":
+				this.setState({
+                    lat : 32.493699,
+                    long : -116.959654,
+                    zoom : 12,
+                    kmz : 'secciones',
+                });
+				break;
+			//Génesis Márquez Rubalcava
+			case  "351741994978553":
+				this.setState({
+                    lat : 31.865930,
+                    long : -116.597069,
+                    zoom : 13,
+                    kmz : 'secciones',
+                });
+				break;
+			//Lauro Aréstegui
+			case  "242601132597540":
+				this.setState({
+                    lat : 32.619812,
+                    long : -115.456473,
+                    zoom : 12,
+                    kmz : 'secciones',
+                });
+				break;
+		}
 	}
 
 	_handleChangeTab(e, v) {
@@ -89,6 +317,9 @@ class App extends Component {
 		// else if (index === 1) {
 		// 	makesomething
 		// }
+		if(index === 2){
+			this.props.sigout();
+		}
 
 		// close
 		this.setState({ anchorEl: null });
@@ -99,9 +330,16 @@ class App extends Component {
 
 		const { classes } = this.props;
 
-		const { tab, auth, anchorEl } = this.state;
-		const open = Boolean(anchorEl);
+		let {lat , long , zoom , kmz} = this.state;
 
+		console.log(lat+'   '+long +" " + zoom)
+
+		const { tab, auth, anchorEl , paginas , publicaciones} = this.state;
+		const open = Boolean(anchorEl);
+		
+		const { from } = this.props.location.state || { from: { pathname: "/" } };
+		if(!this.props.auth.authenticated)
+			return <Redirect to={from} />;
 		return(
 			<Grid container className={classes.root} spacing={8}>
 				<AppBar>
@@ -133,7 +371,7 @@ class App extends Component {
 							onClose={this._handleCloseAccountMenu.bind(this)}
 						>
 							{
-								["Profile", "Account"].map((option, index) => (
+								["Profile", "Account","Log Out"].map((option, index) => (
 									<MenuItem
 										key={index}
 										onClick={event => this._handleAccountMenuItem(event, index)}
@@ -154,12 +392,12 @@ class App extends Component {
 								onChange={this._handleChangeSelect}
 								input={<Input name="page" id="page-helper" />}
 							>
-								<MenuItem value="">
-									<em>All</em>
-								</MenuItem>
-								<MenuItem value={10}>Ten</MenuItem>
-								<MenuItem value={20}>Twenty</MenuItem>
-								<MenuItem value={30}>Thirty</MenuItem>
+							{
+							paginas.map((key , index) => (
+									<MenuItem value={index} token={key.token} key={index}>{key.label}</MenuItem>
+								))
+							}
+								
 							</Select>
 							<FormHelperText>Please select a facebook page</FormHelperText>
 						</FormControl>
@@ -167,7 +405,7 @@ class App extends Component {
 				</Grid>
 				<Grid item xs={12}>
 					<Paper className={classes.paper}>
-						<Maps />
+						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz}/>
 					</Paper>
 				</Grid>
 				<Grid item xs={12}>
@@ -177,14 +415,13 @@ class App extends Component {
 							<Select
 								value={this.state.post}
 								onChange={this._handleChangeSelect}
-								input={<Input name="post" id="post-helper" />}
+								input={<Input name="post" id="page-helper" />}
 							>
-								<MenuItem value="">
-									<em>All</em>
-								</MenuItem>
-								<MenuItem value={10}>Ten</MenuItem>
-								<MenuItem value={20}>Twenty</MenuItem>
-								<MenuItem value={30}>Thirty</MenuItem>
+							{
+								publicaciones.map((key , index) => (
+										<MenuItem value={index} key={index}>{key.label}</MenuItem>
+								))
+							}
 							</Select>
 							<FormHelperText>Please select a facebook post</FormHelperText>
 						</FormControl>
@@ -216,14 +453,14 @@ class App extends Component {
 const AppWithStyles = withStyles(styles)(App);
 
 const mapStateToProps = (state, ownProps) => ({
-	authenticated: state.auth.authenticated,
+	auth: state.auth,
 })
 
 const mapDispatchToProps = null;
 
 export default connect(
 	mapStateToProps,
-	mapDispatchToProps
+	actions,
 )(AppWithStyles)
 
 

@@ -1,7 +1,7 @@
 const initialState = {
 	error              : false,
     error_message      : '',
-    authenticated      : true,
+    authenticated      : false,
     user               : undefined,
     session_token      : undefined
 };
