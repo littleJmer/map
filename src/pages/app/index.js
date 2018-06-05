@@ -18,7 +18,7 @@ import {
 	FormControl, InputLabel, Select, MenuItem,
 	FormHelperText, Input,
 	Tabs, Tab,
-	Menu, 
+	Menu, List , ListItem ,Avatar,ListItemText
 } from '@material-ui/core/';
 
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -27,6 +27,13 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import TierraIcon from '@material-ui/icons/PinDrop';
 import GoogleIcon from '@material-ui/icons/Equalizer';
 import FacebookIcon from '@material-ui/icons/Share';
+
+import Sad from './images/sad.png';
+import Wow from './images/wow.png';
+import Angry from './images/angry.png';
+import Like from './images/like.png';
+import Haha from './images/haha.png';
+import Love from './images/love.png';
 
 import { withStyles } from '@material-ui/core/styles';
 
@@ -65,7 +72,7 @@ class App extends Component {
 			anchorEl: null,
 			paginas : [],
 			publicaciones : [],
-			reacciones : [],
+			reacciones : [{sad: 0},{like: 0},{love: 0},{haha: 0},{angry: 0},{wow: 0}],
 			lat : '',
 			long : '',
 			zoom : '',
@@ -85,7 +92,7 @@ class App extends Component {
 
     paginas () {
     	 let urlfb = 'https://graph.facebook.com/v3.0/me';
-        let token = 'EAACEdEose0cBAKGg3WRAKRKqdXL18h8rQ3BXKMZCcBOVKZBgyhSeGDlGVpNVAvaZAOWqZCweZCuza6ZA4ZBvv9b8PeJ22vgHtCOYuJh3CSkl446lAj55YqBYIRZCy5uZBO84vMjwOIgZBZAGB0HavEtPULFpDbN03iUFySIWWCUdVbEEjzpTSLZBAlq4BEtQLEhqA1t1FvPmjMiLQwZDZD';
+        let token = 'EAACEdEose0cBAN3Pbbumw8I9i9DoXlGYurvticthBmMPGjPMJQV75WpHV45CyD3jWiRzCV9lGDetTr1LdiPvEZCzZBtxcBbL4D90g1c51cP4gj5HIGRqZAqWaMg5u08vIvkygQN8ZAnHW0WzZAscF5w5O69VMgxbZBD3Q7FZAB8i3I4eiDanuMDVja00TDNvsCEOrNNt5wVwgZDZD';
         let consulta = '?fields=accounts%7Bname%2Caccess_token%7D&access_token=';
         let paginas = [];
         let _self = this;
@@ -191,7 +198,7 @@ class App extends Component {
 
 	_handleChangeSelect(e) {
 		
-
+		if(e.target.name === "page"){
 		let {paginas} = this.state;
 		let index = e.target.value;
 		let token = paginas[index].token;
@@ -224,6 +231,40 @@ class App extends Component {
 
             });
         this.coordenadas(id_page);
+    }
+
+    else if(e.target.name === "post"){
+    	console.log(e.target.value)
+    	let page = this.state.page;
+        let {paginas ,publicaciones} = this.state;
+        let idPublicacion = publicaciones[ e.target.value ].value;
+        console.log(page)
+        let page_token = paginas[page].token;
+        let reacciones = [];
+        let self = this;
+        let query = "?fields=reactions.type(LIKE).limit(0).summary(total_count).as(LIKE)%2Creactions.type(LOVE).limit(0).summary(total_count).as(LOVE)%2Creactions.type(SAD).limit(0).summary(total_count).as(SAD)%2Creactions.type(WOW).limit(0).summary(total_count).as(WOW)%2Creactions.type(ANGRY).limit(0).summary(total_count).as(ANGRY)%2Creactions.type(HAHA).limit(0).summary(total_count).as(HAHA)";
+        let url_fb = "https://graph.facebook.com/v3.0/"
+        let access_token = "&access_token="+page_token;
+        
+        axios.get(url_fb+idPublicacion+query+access_token)
+        .then(response => {
+            console.log(response.data.ANGRY.summary.total_count)
+            reacciones.push({  
+                angry : response.data.ANGRY.summary.total_count,
+                haha : response.data.HAHA.summary.total_count,
+                love : response.data.LOVE.summary.total_count,
+                like : response.data.LIKE.summary.total_count,
+                sad : response.data.SAD.summary.total_count,
+                wow : response.data.WOW.summary.total_count,
+            });
+
+            self.setState({
+                reacciones : reacciones,
+            }); 
+
+            console.log(this.state.reacciones)
+        });
+    }
 		
 		this.setState({ [e.target.name]: e.target.value });
 	}
@@ -330,9 +371,11 @@ class App extends Component {
 
 		const { classes } = this.props;
 
-		let {lat , long , zoom , kmz} = this.state;
-
+		let {lat , long , zoom , kmz , reacciones} = this.state;
+		console.log(reacciones)
+		console.log(reacciones['0'].sad)
 		console.log(lat+'   '+long +" " + zoom)
+		console.log(this.state.publicaciones);
 
 		const { tab, auth, anchorEl , paginas , publicaciones} = this.state;
 		const open = Boolean(anchorEl);
@@ -439,7 +482,60 @@ class App extends Component {
 							<Tab label="Google Analytics" icon={<GoogleIcon />} />
 							<Tab label="Land" icon={<TierraIcon />} />
 						</Tabs>
-						{tab === 0 && <Typography>Item One</Typography>}
+						{tab === 0 && <Typography>
+							<Grid container spacing={24}>
+						        <Grid item xs={4}>
+						          
+						        </Grid>
+						        <Grid item xs={4}>
+						          <List>
+						        <ListItem>
+						          <Avatar>
+						           <img src={Sad} widht="50px" height="50px"/> 
+						          </Avatar>
+						          <ListItemText primary={  reacciones['0'].sad } />
+						        </ListItem>
+						        <ListItem>
+						          <Avatar>
+						          <img src={Wow} widht="50px" height="50px"/> <br/>
+						          </Avatar>
+						          <ListItemText primary={  reacciones['0'].wow }  />
+						        </ListItem>
+						        <ListItem>
+						          <Avatar>
+						           <img src={Like} widht="50px" height="50px"/> <br/>
+						          </Avatar>
+						          <ListItemText primary={ reacciones['0'].like  } />
+						        </ListItem>
+						        <ListItem>
+						          <Avatar>
+						           <img src={Love} widht="50px" height="50px"/> <br/>
+						          </Avatar>
+						          <ListItemText primary={  reacciones['0'].love  }  />
+						        </ListItem>
+						        <ListItem>
+						          <Avatar>
+						          <img src={Haha} widht="50px" height="50px"/> <br/>
+						          </Avatar>
+						          <ListItemText primary={  reacciones['0'].haha }  />
+						        </ListItem>
+						        <ListItem>
+						          <Avatar>
+						          <img src={Angry} widht="50px" height="50px"/> <br/>
+						          </Avatar>
+						          <ListItemText primary={  reacciones['0'].angry  } />
+						        </ListItem>
+						      </List>
+						        </Grid>
+						        <Grid item xs={4}>
+						          
+						        </Grid>
+						      </Grid>
+							<Grid item xs={12} justify="center">
+					          
+					        </Grid>
+							
+						</Typography>}
 						{tab === 1 && <Typography>Item Two</Typography>}
 						{tab === 2 && <Typography>Item Three</Typography>}
 					</Paper>
