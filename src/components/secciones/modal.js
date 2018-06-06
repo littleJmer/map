@@ -7,9 +7,12 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import {api,request} from '../../actions/request';
 
-import * as actions from '../../actions/configuracion.js';
+import * as actions from '../../actions/secciones.js';
+import IconEdit from '@material-ui/icons/Create';
 
 import { connect } from 'react-redux';
+import ReactTable from "react-table";
+import "react-table/react-table.css";
 
 import swal from 'sweetalert2'
 function getModalStyle() {
@@ -17,9 +20,10 @@ function getModalStyle() {
   const left = 50 ;
 
   return {
-    top: `${top}%`,
+    top: `50%`,
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`,
+    width:"80%"
   };
 }
 
@@ -45,7 +49,7 @@ const styles = theme => ({
 class App extends Component {
 
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
        name:"Nuevo Token",
@@ -60,6 +64,10 @@ class App extends Component {
     this.guardar    = this.guardar.bind(this);
 
    
+  }
+  componentDidMount(){
+  // this.props.get();
+  console.log(this.props);
   }
    handleSubmit(event)
   {
@@ -117,18 +125,41 @@ class App extends Component {
         >
           <div style={getModalStyle()} className={classes.paper}>
             <Typography variant="title" id="modal-title">
-              Token Access
+              Secciones
             </Typography>
             <form className={classes.container} noValidate autoComplete="off">
-            <TextField
-              id="access_token"  
-              name="access_token"            
-              className={classes.input}
-              value={this.state.configuracion.access_token}
-             placeholder={this.state.name}
-             onChange={this.handleSubmit}
-              margin="normal"
-            />
+             <ReactTable
+                              data      = {this.props.secciones.data}
+                              className = "-striped -highlight"
+                              columns   = {[
+                               
+                                {Header: 'Has', accessor: 'label'},
+                                {
+                                    Header: 'Controles',
+                                    filterable: false,
+                                    sortable: false,
+                                    Cell: (row) =>
+                                    {
+                                        return(
+                                            <div className="text-right">
+                                                <Button
+                                                 color="success" 
+                                                 className="btn-sm" 
+                                                 onClick={(evt)=>this.toggle(evt, row.original.value, 'Editar Categoria')}>
+                                                    <IconEdit />
+                                                </Button>{' '}
+                                                 
+                                            </div>
+                                        )
+                                    }
+                                }
+                              
+                              ]}
+                              filterable 
+                              defaultPageSize={5} 
+                              
+                             
+                            />
 
             <Button variant="contained" className={classes.Button} onClick={this.guardar} color="primary">
         Guardar
@@ -148,11 +179,11 @@ class App extends Component {
 const AppWithStyles = withStyles(styles)(App);
 
 const mapStateToProps = (state, ownProps) => ({
-  auth: state.auth,
+  secciones: state.secciones,
   classes: PropTypes.object.isRequired,
 })
 
-const mapDispatchToProps = null;
+//const mapDispatchToProps = null;
 
 export default connect(
   mapStateToProps,

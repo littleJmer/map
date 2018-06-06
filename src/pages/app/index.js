@@ -47,6 +47,7 @@ import Maps from '../../components/googleMaps';
 import * as actions from '../../actions/auth.js';
 import {api,request} from '../../actions/request';
 import Modal from "../../components/token/modal";
+import ModalSeccion from "../../components/secciones/modal";
 
 const styles = theme => ({
 	root: {
@@ -100,6 +101,7 @@ class App extends Component {
 		this._handleChangeSelect = this._handleChangeSelect.bind(this);
 		this._handleChangeTab = this._handleChangeTab.bind(this);
 		 this.toggle 			= this.toggle.bind(this);
+		  this.toggle_seccion 			= this.toggle_seccion.bind(this);
 	}
 
 	componentDidMount() {
@@ -124,6 +126,18 @@ class App extends Component {
 
         this.setState({
             modal_token       : !this.state.modal_token,
+           
+            
+        });
+
+
+    }
+     toggle_seccion(evt)
+    {
+        console.log("entro");
+
+        this.setState({
+            modal_secciones       : !this.state.modal_secciones,
            
             
         });
@@ -477,10 +491,10 @@ class App extends Component {
 							<DashboardIcon />
 						</IconButton>
 						<IconButton color="inherit" className={classes.button} aria-label="Delete">
-							<Token />						
+							<Token onClick={this.toggle} />						
 						</IconButton>	
 						<IconButton color="inherit" className={classes.button} aria-label="Delete">
-							<SettingsIcon  onClick={this.toggle}/>						
+							<SettingsIcon onClick={this.toggle_seccion} />						
 						</IconButton>	
 											
 						<IconButton
@@ -563,6 +577,15 @@ class App extends Component {
                    <Modal 
                  open={this.state.modal_token} 
                  toggle={this.toggle} 
+                  
+                
+                />
+                }
+                {
+                   this.state.modal_secciones&& 
+                   <ModalSeccion 
+                 open={this.state.modal_secciones} 
+                 toggle={this.toggle_seccion} 
                   
                 
                 />
