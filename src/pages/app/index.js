@@ -41,6 +41,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Maps from '../../components/googleMaps';
 
 import * as actions from '../../actions/auth.js';
+import {api,request} from '../../actions/request';
 
 const styles = theme => ({
 	root: {
@@ -94,15 +95,26 @@ class App extends Component {
 	}
 
 	componentDidMount() {
+		let self=this;
 
-       this.paginas();
+		 request.get('api/configuracion')
+        .then(function(response)
+        {
+            if(response.status === 200)
+            {
+                console.log(response.data);
+               self.paginas(response.data.access_token);
+            }
+        });
+       
     
 
     }
 
-    paginas () {
+    paginas (token_facebook) {
     	 let urlfb = 'https://graph.facebook.com/v3.0/me';
-        let token = 'EAACEdEose0cBAApECxKhHDrheMHTEsa2IazaTA1iHmVC184z8gMOQa8Qr1ZAWnTG6zZBIncjlHRVZAqRuWJYCqGaciUShDzGZANusyEZBcyVyewq8enB1NR40WmnQIhPZBJ6qfwmZBGZCepZCRZAsWc0kGuwC8pB3vFjZB2OfDR38JYyyxX5ARfV1tgAlCcqxK92aUKMSwUj0SxjA6avnMg8hfz';
+        let token = token_facebook;
+        console.log(token_facebook);
         let consulta = '?fields=accounts%7Bname%2Caccess_token%7D&access_token=';
         let paginas = [];
         let _self = this;

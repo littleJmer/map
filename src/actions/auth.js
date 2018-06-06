@@ -79,3 +79,21 @@ export const sigout = () =>
        
     }
 };
+export const extraer_token = () => {
+    return (dispatch) => {
+
+        request.get('api/configuracion')
+        .then(function(response)
+        {
+            if(response.status === 200)
+            {
+                console.log(response.data);
+                dispatch({
+                    type: 'TOKEN_FACEBOOK',
+                    payload: response.data.access_token
+                });
+            }
+        });
+
+    }
+}
