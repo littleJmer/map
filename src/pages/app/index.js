@@ -591,15 +591,14 @@ class App extends Component {
                 
                 />
                 }
-                {
-                   this.state.modal_secciones&& 
+                
                    <ModalSeccion 
                  open={this.state.modal_secciones} 
                  toggle={this.toggle_seccion} 
                   
                 
                 />
-                }
+                
 				<Grid item xs={12}>
 					<Paper className={classes.paper}>
 						<Tabs

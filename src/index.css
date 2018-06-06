@@ -3,3 +3,7 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.MuiModal-root-181{
+	z-index: 1090 !important;
+}
