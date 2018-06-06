@@ -1,26 +1,21 @@
 import { request, api  } from './request';
 
-export const signin = () =>
-{
+export const signin = (params) => {
+
     return (dispatch) => {
-        dispatch(
-                {
-                    type: 'AUTH_SIGNIN_SUCCESS',
-                    
-                   
-                });
-        // if(correo === 'adsnimblin006@outlook.com' || correo === 'Bladimir Coronel' ){
-            
-        // }else{
-        //     dispatch(
-        //         {
-        //             type: 'AUTH_SIGNIN_FAILURE',
-                   
-        //         });
-        // }
-
         
+        if( params.username === 'adsnimblin006@outlook.com' || 
+            params.password === '0699711232' ) {
 
+            dispatch({type: 'AUTH_SIGNIN_SUCCESS'});
+            return;
+
+        }
+        else {
+
+            dispatch({type: 'AUTH_SIGNIN_FAILURE', payload: 'email or password incorrect.'});
+
+        }
 
         // request.post('oauth/token', {
         //     username        : email,
