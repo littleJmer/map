@@ -3,7 +3,8 @@ const initialState = {
     error_message      : '',
     authenticated      : false,
     user               : undefined,
-    session_token      : undefined
+    session_token      : undefined,
+    token_facebook:null,
 };
 
 export default (state = initialState, action) => {
@@ -28,6 +29,11 @@ export default (state = initialState, action) => {
             return {
                 ...state,
                 user: action.payload
+            }
+             case "TOKEN_FACEBOOK":
+            return {
+                ...state,
+                token_facebook: action.payload
             }
 
         case "AUTH_SIGNOUT_SUCCESS":
