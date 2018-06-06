@@ -92,7 +92,7 @@ class App extends Component {
 
     paginas () {
     	 let urlfb = 'https://graph.facebook.com/v3.0/me';
-        let token = 'EAACEdEose0cBAIl4ZCJhhOp32ckrbZBrAg5k5bY52PfBE3yGZBTU8ZANrXF9lW2J7Jdq15ZB5MybZCQyv0anZC7ibv7PGsUZCZC0lM2hqSUMZBIUxm5UvLHkqbemZBa1cZAFqK5lqi9GeAeTqd71RSZABjnQVo3EVZAhgFZAw60eUwGsMPeJ6PLAZB00ZC6cwjpGWwFdglBCZBy5eQtQGIQQZDZD';
+        let token = 'EAACEdEose0cBAM8ZBAwqi0RhRKsOdb3QIlbm77bYrpIQ2Om1QBEisi6e30dZB6gs2Y83XtH9GthxjBbjpFZAhToCNIdK5IVjBMtQkTQjAF4LBOZAZAL28CJq3bOFn70ZBf8XxJ4tk24xyhIj74ZA7Sesw9QERS66wHeZADgcvGq95EcZAZB3gzmKD1WGgSIllxHCxaZA4OVYHk8vwZDZD';
         let consulta = '?fields=accounts%7Bname%2Caccess_token%7D&access_token=';
         let paginas = [];
         let _self = this;
@@ -332,6 +332,13 @@ class App extends Component {
                     lat : 32.619812,
                     long : -115.456473,
                     zoom : 12,
+                    kmz : 'secciones',
+                });
+            case "591668464524390":
+            	this.setState({
+                    lat : 31.865930,
+                    long : -116.597069,
+                    zoom : 13,
                     kmz : 'secciones',
                 });
 				break;
