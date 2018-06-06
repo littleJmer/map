@@ -577,7 +577,11 @@ class App extends Component {
 						<Typography variant="title" color="inherit" className={classes.flex}>
 							Nimblin
 						</Typography>
-						<IconButton color="inherit" className={classes.button} aria-label="Delete">
+						<IconButton color="inherit" onClick={() => {
+
+							window.location.href = 'http://encuestasbc.org/verify/#/app';
+
+						}} className={classes.button} aria-label="Delete">
 							<DashboardIcon />
 						</IconButton>
 						<IconButton color="inherit" onClick={this.toggle} className={classes.button} aria-label="Delete">
