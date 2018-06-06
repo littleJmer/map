@@ -114,50 +114,120 @@ geoXML3.parser = function (options) {
     render(geoXML3.xmlParse(kmlString),thisDoc);
   }
 
-  var parse = function (urls, docSet) {
-    // Process one or more KML documents
-    if (!parserName) {
-      parserName = 'geoXML3.instances[' + (geoXML3.instances.push(this) - 1) + ']';
+
+  /*---------------------------
+   * touched by chino
+   *---------------------------
+   *
+   *
+   */
+
+    var parse = function(urls, docSet) {
+
+        return new Promise(function(resolve, reject) {
+
+
+            // Process one or more KML documents
+            if (!parserName) {
+                parserName = 'geoXML3.instances[' + (geoXML3.instances.push(this) - 1) + ']';
+            }
+
+            if (typeof urls === 'string') {
+                // Single KML document
+                urls = [urls];
+            }
+
+            // Internal values for the set of documents as a whole
+            var internals = {
+                parser: this,
+                docSet: docSet || [],
+                remaining: urls.length,
+                parseOnly: !(parserOptions.afterParse || parserOptions.processStyles)
+            };
+
+            var thisDoc, j;
+            for (var i = 0; i < urls.length; i++) {
+
+                var baseUrl = urls[i].split('?')[0];
+
+                for (j = 0; j < docs.length; j++) {
+
+                    if (baseUrl === docs[j].baseUrl) {
+                        // Reloading an existing document
+                        thisDoc = docs[j];
+                        thisDoc.reload    = true;
+                        break;
+                    }
+
+                }
+
+                if (j >= docs.length) {
+                    thisDoc = new Object();
+                    thisDoc.baseUrl = baseUrl;
+                    internals.docSet.push(thisDoc);
+                }
+
+                thisDoc.url       = urls[i];
+                thisDoc.internals = internals;
+
+                var url = thisDoc.url;
+                if (parserOptions.proxy)
+                    url = parserOptions.proxy+thisDoc.url; 
+
+                fetchDoc(url, thisDoc);
+
+                resolve(true);
+            }
+
+
+        });
+
     }
+
+  // var parse = function (urls, docSet) {
+  //   // Process one or more KML documents
+  //   if (!parserName) {
+  //     parserName = 'geoXML3.instances[' + (geoXML3.instances.push(this) - 1) + ']';
+  //   }
     
-    if (typeof urls === 'string') {
-      // Single KML document
-      urls = [urls];
-    }
+  //   if (typeof urls === 'string') {
+  //     // Single KML document
+  //     urls = [urls];
+  //   }
 
-    // Internal values for the set of documents as a whole
-    var internals = {
-      parser: this,
-      docSet: docSet || [],
-      remaining: urls.length,
-      parseOnly: !(parserOptions.afterParse || parserOptions.processStyles)
-    };
-    var thisDoc, j;
-    for (var i = 0; i < urls.length; i++) {
-      var baseUrl = urls[i].split('?')[0];
-      for (j = 0; j < docs.length; j++) {
-        if (baseUrl === docs[j].baseUrl) {
-          // Reloading an existing document
-          thisDoc = docs[j];
-          thisDoc.reload    = true;
-          break;
-        }
-      }
-      if (j >= docs.length) {
-        thisDoc = new Object();
-        thisDoc.baseUrl = baseUrl;
-        internals.docSet.push(thisDoc);
-      }
-      thisDoc.url       = urls[i];
-      thisDoc.internals = internals;
-      var url = thisDoc.url;
-      if (parserOptions.proxy) url = parserOptions.proxy+thisDoc.url; 
-      fetchDoc(url, thisDoc);
-    }
-  };
+  //   // Internal values for the set of documents as a whole
+  //   var internals = {
+  //     parser: this,
+  //     docSet: docSet || [],
+  //     remaining: urls.length,
+  //     parseOnly: !(parserOptions.afterParse || parserOptions.processStyles)
+  //   };
+  //   var thisDoc, j;
+  //   for (var i = 0; i < urls.length; i++) {
+  //     var baseUrl = urls[i].split('?')[0];
+  //     for (j = 0; j < docs.length; j++) {
+  //       if (baseUrl === docs[j].baseUrl) {
+  //         // Reloading an existing document
+  //         thisDoc = docs[j];
+  //         thisDoc.reload    = true;
+  //         break;
+  //       }
+  //     }
+  //     if (j >= docs.length) {
+  //       thisDoc = new Object();
+  //       thisDoc.baseUrl = baseUrl;
+  //       internals.docSet.push(thisDoc);
+  //     }
+  //     thisDoc.url       = urls[i];
+  //     thisDoc.internals = internals;
+  //     var url = thisDoc.url;
+  //     if (parserOptions.proxy) url = parserOptions.proxy+thisDoc.url; 
+  //     fetchDoc(url, thisDoc);
+  //   }
+  // };
 
-  function fetchDoc(url, doc) {
-      geoXML3.fetchXML(url, function (responseXML) { render(responseXML, doc);})
+  function fetchDoc(url, doc, cb) {
+      geoXML3.fetchXML(url, function (responseXML) { render(responseXML, doc); })
   }
 
   var hideDocument = function (doc) {
