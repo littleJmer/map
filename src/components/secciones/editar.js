@@ -154,26 +154,26 @@ class App extends Component {
     let seccion= this.state.seccion;
     this.props[self.state.action](seccion, () => {
 
-      swal({
-        title: 'Seccion',
-        text: "Se ha guardado con éxito",
-        type: 'success',
-        // showCancelButton: true,
-        // confirmButtonColor: '#3085d6',
-        // cancelButtonColor: '#d33',
-        confirmButtonText: 'Continuar!'
-      }).then((result) => {
-        if (result.value) {
-          // swal(
-          //  'Deleted!',
-          //  'Your file has been deleted.',
-          //  'success'
-          //  )
-                    self.asNothing();
-                  self.props.toggle();
+      // swal({
+      //   title: 'Seccion',
+      //   text: "Se ha guardado con éxito",
+      //   type: 'success',
+      //   // showCancelButton: true,
+      //   // confirmButtonColor: '#3085d6',
+      //   // cancelButtonColor: '#d33',
+      //   confirmButtonText: 'Continuar!'
+      // }).then((result) => {
+      //   if (result.value) {
+      //     // swal(
+      //     //  'Deleted!',
+      //     //  'Your file has been deleted.',
+      //     //  'success'
+      //     //  )
+      //               self.asNothing();
+      //             self.props.toggle();
                     
-        }
-      })
+      //   }
+      // })
 
     });
 
