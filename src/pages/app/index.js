@@ -28,6 +28,10 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import TierraIcon from '@material-ui/icons/PinDrop';
 import GoogleIcon from '@material-ui/icons/Equalizer';
 import FacebookIcon from '@material-ui/icons/Share';
+import Token from '@material-ui/icons/CardMembership';
+
+
+
 
 import Sad from './images/sad.png';
 import Wow from './images/wow.png';
@@ -42,6 +46,7 @@ import Maps from '../../components/googleMaps';
 
 import * as actions from '../../actions/auth.js';
 import {api,request} from '../../actions/request';
+import Modal from "../../components/token/modal";
 
 const styles = theme => ({
 	root: {
@@ -87,11 +92,14 @@ class App extends Component {
 			long : '',
 			zoom : '',
 			kmz : 'distritos.kmz',
-			circulos:[]
+			circulos:[],
+			modal_token:false,
+			modal_secciones:false,
 		};
 
 		this._handleChangeSelect = this._handleChangeSelect.bind(this);
 		this._handleChangeTab = this._handleChangeTab.bind(this);
+		 this.toggle 			= this.toggle.bind(this);
 	}
 
 	componentDidMount() {
@@ -108,6 +116,18 @@ class App extends Component {
         });
        
     
+
+    }
+    toggle(evt)
+    {
+        console.log("entro");
+
+        this.setState({
+            modal_token       : !this.state.modal_token,
+           
+            
+        });
+
 
     }
 
@@ -457,8 +477,12 @@ class App extends Component {
 							<DashboardIcon />
 						</IconButton>
 						<IconButton color="inherit" className={classes.button} aria-label="Delete">
-							<SettingsIcon />
-						</IconButton>
+							<Token />						
+						</IconButton>	
+						<IconButton color="inherit" className={classes.button} aria-label="Delete">
+							<SettingsIcon  onClick={this.toggle}/>						
+						</IconButton>	
+											
 						<IconButton
 							color="inherit"
 							className={classes.button}
@@ -468,6 +492,7 @@ class App extends Component {
 						>
 							<AccountCircle />
 						</IconButton>
+
 						<Menu
 							id="menu-appbar"
 							anchorEl={anchorEl}
@@ -533,6 +558,15 @@ class App extends Component {
 						</FormControl>
 					</Paper>
 				</Grid>
+				 {
+                   this.state.modal_token&& 
+                   <Modal 
+                 open={this.state.modal_token} 
+                 toggle={this.toggle} 
+                  
+                
+                />
+                }
 				<Grid item xs={12}>
 					<Paper className={classes.paper}>
 						<Tabs
