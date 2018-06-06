@@ -24,59 +24,59 @@ class Login extends Component {
 
 	componentDidMount()
     {
-    	let self = this;
-    		if(window.FB !==  undefined){
-	        window.FB.getLoginStatus(function(response) {
-			    console.log(response)
-			    if(response.status === "connected"){
-			    	window.FB.api('/me?fields=id,name,email', function(response) {
-			    		console.log(response)
-					       self.setState({
-						    	correo : response.email,
-						    	name : response.name,
-						    	access_token : response.accessToken
-						    })
-					     });
-				    self.setState({
-				    	text : 'Continue with Facebook',
-				    	loginfb : true,
-				    })
-				}else{
-			    	self.setState({
-					    	text : 'Login With Facebook',
-					    	loginfb : false,
-					    })
-			    	console.log('not loged')
-			    }
-			});
-	    }
+   //  	let self = this;
+   //  		if(window.FB !==  undefined){
+	  //       window.FB.getLoginStatus(function(response) {
+			//     console.log(response)
+			//     if(response.status === "connected"){
+			//     	window.FB.api('/me?fields=id,name,email', function(response) {
+			//     		console.log(response)
+			// 		       self.setState({
+			// 			    	correo : response.email,
+			// 			    	name : response.name,
+			// 			    	access_token : response.accessToken
+			// 			    })
+			// 		     });
+			// 	    self.setState({
+			// 	    	text : 'Continue with Facebook',
+			// 	    	loginfb : true,
+			// 	    })
+			// 	}else{
+			//     	self.setState({
+			// 		    	text : 'Login With Facebook',
+			// 		    	loginfb : false,
+			// 		    })
+			//     	console.log('not loged')
+			//     }
+			// });
+	  //   }
     }
 
     loginfb(){
-    	let {loginfb, correo , name , access_token} = this.state;
-    	let _self = this;
+   //  	let {loginfb, correo , name , access_token} = this.state;
+   //  	let _self = this;
 
-    	if(!loginfb){
-			window.FB.login(function(response) {
-				console.log(response)
-			   	if (response.authResponse) {
-			   		let token = response.authResponse.accessToken;
-			   		let email; 
-			     	console.log('Welcome!  Fetching your information.... ');
-			     	window.FB.api('/me?fields=id,name,email', function(response) {
-				     	console.log(response)
-				     	email = response.email;
-				       console.log('Good to see you, ' + response.name + '.' + response.email);
-				       _self.props.signin();
-			     });
-			   	} else {
-			     console.log('User cancelled login or did not fully authorize.');
-			   }
-			 });
-    	}else{
-    		console.log(correo)
+   //  	if(!loginfb){
+			// window.FB.login(function(response) {
+			// 	console.log(response)
+			//    	if (response.authResponse) {
+			//    		let token = response.authResponse.accessToken;
+			//    		let email; 
+			//      	console.log('Welcome!  Fetching your information.... ');
+			//      	window.FB.api('/me?fields=id,name,email', function(response) {
+			// 	     	console.log(response)
+			// 	     	email = response.email;
+			// 	       console.log('Good to see you, ' + response.name + '.' + response.email);
+			// 	       _self.props.signin();
+			//      });
+			//    	} else {
+			//      console.log('User cancelled login or did not fully authorize.');
+			//    }
+			//  });
+   //  	}else{
+    		console.log()
     		this.props.signin();
-    	}
+    	// }
 	}	
 
 	render() {

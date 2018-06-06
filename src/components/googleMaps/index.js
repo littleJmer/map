@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { GoogleStyles } from './styles';
 // import mykml from './secciones.kml';
 import mykml from './distritos.kml';
-import seccion from './secciones.kml';
+import seccion from './setsion.kml';
 
 let map = null;
 
@@ -60,6 +60,27 @@ export default class Map extends Component {
             var center = new window.google.maps.LatLng(nextProps.lat, nextProps.lng);
             map.panTo(center);
             map.setZoom(nextProps.zoom); 
+            var cityCircle = new window.google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                // fillColor: '#FF0000',
+                // fillOpacity: .2,
+                map: map,
+                center: {lat: 31.855366, lng: -116.584063},
+                radius: 1000
+            });
+
+            var cityCircle = new window.google.maps.Circle({
+                strokeColor: '#FF0000',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                // fillColor: '#FF0000',
+                // fillOpacity: .2,
+                map: map,
+                center: {lat: 31.832876, lng: -116.597712},
+                radius: 1000
+            });
 
         }
         

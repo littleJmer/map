@@ -92,7 +92,7 @@ class App extends Component {
 
     paginas () {
     	 let urlfb = 'https://graph.facebook.com/v3.0/me';
-        let token = 'EAACEdEose0cBAN3Pbbumw8I9i9DoXlGYurvticthBmMPGjPMJQV75WpHV45CyD3jWiRzCV9lGDetTr1LdiPvEZCzZBtxcBbL4D90g1c51cP4gj5HIGRqZAqWaMg5u08vIvkygQN8ZAnHW0WzZAscF5w5O69VMgxbZBD3Q7FZAB8i3I4eiDanuMDVja00TDNvsCEOrNNt5wVwgZDZD';
+        let token = 'EAACEdEose0cBAIl4ZCJhhOp32ckrbZBrAg5k5bY52PfBE3yGZBTU8ZANrXF9lW2J7Jdq15ZB5MybZCQyv0anZC7ibv7PGsUZCZC0lM2hqSUMZBIUxm5UvLHkqbemZBa1cZAFqK5lqi9GeAeTqd71RSZABjnQVo3EVZAhgFZAw60eUwGsMPeJ6PLAZB00ZC6cwjpGWwFdglBCZBy5eQtQGIQQZDZD';
         let consulta = '?fields=accounts%7Bname%2Caccess_token%7D&access_token=';
         let paginas = [];
         let _self = this;
@@ -206,12 +206,12 @@ class App extends Component {
 		let publicaciones = [];
 		let self = this;
 
-		let urlfb = 'https://graph.facebook.com/v3.0/'+id_page+'?fields=feed&access_token=';
+		let urlfb = 'https://graph.facebook.com/v3.0/'+id_page+'?fields=posts&access_token=';
 
         axios.get(urlfb+token)
         .then(response => {
             
-             response.data.feed.data.some(function(obj) {
+             response.data.posts.data.some(function(obj) {
              	if(obj.message)
                     publicaciones.push({
                         
@@ -482,7 +482,7 @@ class App extends Component {
 							<Tab label="Google Analytics" icon={<GoogleIcon />} />
 							<Tab label="Land" icon={<TierraIcon />} />
 						</Tabs>
-						{tab === 0 && <Typography>
+						{tab === 0 && 
 							<Grid container spacing={24}>
 						        <Grid item xs={4}>
 						          
@@ -527,15 +527,9 @@ class App extends Component {
 						        </ListItem>
 						      </List>
 						        </Grid>
-						        <Grid item xs={4}>
-						          
-						        </Grid>
-						      </Grid>
-							<Grid item xs={12} justify="center">
-					          
-					        </Grid>
+						    </Grid>
 							
-						</Typography>}
+						}
 						{tab === 1 && <Typography>Item Two</Typography>}
 						{tab === 2 && <Typography>Item Three</Typography>}
 					</Paper>
