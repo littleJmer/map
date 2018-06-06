@@ -13,6 +13,7 @@ import IconEdit from '@material-ui/icons/Create';
 import { connect } from 'react-redux';
 import ReactTable from "react-table";
 import "react-table/react-table.css";
+import Modaledit from "./editar";
 
 import swal from 'sweetalert2'
 function getModalStyle() {
@@ -23,7 +24,8 @@ function getModalStyle() {
     top: `50%`,
     left: `${left}%`,
     transform: `translate(-${top}%, -${left}%)`,
-    width:"80%"
+    width:"80%",
+    zIndex:"1099 "
   };
 }
 
@@ -52,21 +54,30 @@ class App extends Component {
     super(props);
 
     this.state = {
-       name:"Nuevo Token",
-    configuracion:{
-      id:1,
-      access_token:"",
-    }
+      modal:false,
+      id:null,
+      title:""
       
     };
 
     this.handleSubmit    = this.handleSubmit.bind(this);
     this.guardar    = this.guardar.bind(this);
+    this.toggle    = this.toggle.bind(this);
 
    
   }
+  toggle(evt, id = null, title = "Agregar Seccion")
+    {
+        this.setState({
+            modal       : !this.state.modal,          
+            id: id,
+            title:title
+        });
+
+
+    }
   componentDidMount(){
-  // this.props.get();
+   this.props.get();
   console.log(this.props);
   }
    handleSubmit(event)
@@ -111,7 +122,7 @@ class App extends Component {
 
   render() {
     const { classes } = this.props;
-
+console.log(actions);
  
     return(
        <div>
@@ -133,7 +144,7 @@ class App extends Component {
                               className = "-striped -highlight"
                               columns   = {[
                                
-                                {Header: 'Has', accessor: 'label'},
+                                {Header: 'Has', accessor: 'has'},
                                 {
                                     Header: 'Controles',
                                     filterable: false,
@@ -145,7 +156,7 @@ class App extends Component {
                                                 <Button
                                                  color="success" 
                                                  className="btn-sm" 
-                                                 onClick={(evt)=>this.toggle(evt, row.original.value, 'Editar Categoria')}>
+                                                 onClick={(evt)=>this.toggle(evt, row.original.value, 'Editar Seccion')}>
                                                     <IconEdit />
                                                 </Button>{' '}
                                                  
@@ -161,14 +172,26 @@ class App extends Component {
                              
                             />
 
-            <Button variant="contained" className={classes.Button} onClick={this.guardar} color="primary">
-        Guardar
+            <Button variant="contained" className={classes.Button} onClick={this.toggle} color="primary">
+        Agregar
       </Button>
             </form>
           
-            <AppWithStyles />
+           
           </div>
         </Modal>
+         {
+                   this.state.modal&& 
+                   <Modaledit 
+                 open={this.state.modal} 
+                 toggle={this.toggle} 
+                  id={this.state.id} 
+                  title={this.state.title} 
+
+                  
+                
+                />
+                }
       </div>
       
     )
@@ -176,7 +199,7 @@ class App extends Component {
 
 }
 
-const AppWithStyles = withStyles(styles)(App);
+let AppWithStyles = withStyles(styles)(App);
 
 const mapStateToProps = (state, ownProps) => ({
   secciones: state.secciones,
@@ -186,6 +209,6 @@ const mapStateToProps = (state, ownProps) => ({
 //const mapDispatchToProps = null;
 
 export default connect(
-  mapStateToProps,
+ mapStateToProps ,
   actions,
 )(AppWithStyles)
