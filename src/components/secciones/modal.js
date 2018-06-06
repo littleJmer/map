@@ -150,6 +150,8 @@ console.log(actions);
                               columns   = {[
                                
                                 {Header: 'Has', accessor: 'has'},
+                                {Header: 'Latitud', accessor: 'lat'},
+                                {Header: 'Longitud', accessor: 'lng'},
                                 {
                                     Header: 'Controles',
                                     filterable: false,
