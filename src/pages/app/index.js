@@ -495,7 +495,7 @@ class App extends Component {
 				<AppBar>
 					<Toolbar>
 						<Typography variant="title" color="inherit" className={classes.flex}>
-							Title
+							Nimblin
 						</Typography>
 						<IconButton color="inherit" className={classes.button} aria-label="Delete">
 							<DashboardIcon />

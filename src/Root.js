@@ -12,7 +12,7 @@ import App from "./pages/app";
 const { persistor, store } = configureStore();
 
 // comment this line for producction
-indexedDB.deleteDatabase('localforage');
+// indexedDB.deleteDatabase('localforage');
 
 class Root extends Component {
 

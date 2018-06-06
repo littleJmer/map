@@ -2,7 +2,11 @@ import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
 import { connect } from 'react-redux';
 
+import swal from 'sweetalert2';
+
 import * as actions from '../../actions/auth.js';
+
+import bgImage from './bg2.jpg';
 
 class Login extends Component {
 
@@ -14,12 +18,14 @@ class Login extends Component {
 		this.state ={
 			text : '',
 			logedfb : '',
-			name : '',
+			username : '',
+			password: '',
 			access_token : '',
 		}
-
 		
 		this.loginfb = this.loginfb.bind(this);
+		this.onSubmitHander = this.onSubmitHander.bind(this);
+		this.handleInputChange = this.handleInputChange.bind(this);
 	}
 
 	componentDidMount()
@@ -74,10 +80,36 @@ class Login extends Component {
 			//    }
 			//  });
    //  	}else{
-    		console.log()
-    		this.props.signin();
+    		// console.log()
+    		// this.props.signin();
     	// }
-	}	
+	}
+
+	handleInputChange(event) {
+		const target = event.target;
+		const value = target.type === 'checkbox' ? target.checked : target.value;
+		const name = target.name;
+
+		this.setState({
+			[name]: value
+		});
+	}
+
+	onSubmitHander(evt)  {
+
+		evt.preventDefault();
+
+
+		let {username, password} = this.state;
+
+		if(username == "" || password == "") {
+			swal("Error!", "Please type all the inputs!", "error");
+			return;
+		}
+
+		this.props.signin({username: username, password: password});
+
+	}
 
 	render() {
 		const { from } = this.props.location.state || { from: { pathname: "/app" } };
@@ -86,9 +118,34 @@ class Login extends Component {
 			return <Redirect to={from} />;
 
 		return(
-			<div>
-				<label>Aqui chino hizo magia</label>
-				<button onClick={this.loginfb} style={styles.colorFB}>{this.state.text}</button>
+			<div style={styles.container}>
+				<div style={styles.flexRow}>
+					<div style={{...styles.flexRowItem,...styles.bgLeft}}>
+						<form onSubmit={this.onSubmitHander} style={{'min-width': '50%'}} >
+							<input
+								style={styles.input}
+								type="email"
+								placeholder="input your email"
+								name="username"
+								value={this.state.username}
+								onChange={this.handleInputChange}
+							/>
+							<input
+								style={styles.input}
+								type="password"
+								placeholder="input your password"
+								name="password"
+								value={this.state.password}
+								onChange={this.handleInputChange}
+							/>
+							<button style={styles.submit} type="submit">Signin</button>
+							{this.props.error && <div>
+								<p style={styles.error}>{this.props.error_message}</p>
+							</div>}
+						</form>
+					</div>
+					<div style={styles.flexRowItem}></div>
+				</div>
 			</div>
 		)
 	}
@@ -100,57 +157,72 @@ const styles = {
 	container: {
 		width: '100%',
 		height: '100vh',
+		backgroundImage: "url(" + bgImage + ")",
+		backgroundPosition: 'center center',
+		backgroundSize: 'cover',
 	},
 
-	wrapper: {
+	bgLeft: {
+		backgroundColor: 'rgba(255,255,255,.5)',
+	},
+
+	flexRow: {
 		display: 'flex',
 		height: '100%',
+		width: '100%',
+
 	},
 
-	loginForm: {
-		width: '60%'
-	},
-
-	colorFB :{
-		background : '#4267b2'
-	},
-
-	title: {
-		textAlign: 'center',
-		fontSize: '27px',
-		marginBottom: '2em'
+	flexRowItem: {
+		flex: 1,
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		'boxShadow': '#000000a6 8px 0px 15px -2px'
 	},
 
 	input: {
-		fontSize: '18px',
-		display: 'block',
-		width: '100%',
-		padding: '6px 12px',
-		borderRadius: '6px',
-		border: 'solid 1px #ACACAC',
-		color: '#ACACAC',
-		marginBottom: '1.5em',
+	 display: 'block',
+	 color: '#2e2e2e',
+	 fontSize: '18px',
+	 marginBottom: '20px',
+	 width: '100%',
+	 padding: '12px 24px',
+	 border: 'none',
+	 borderRadius: '3px',
+	 boxSizing:'border-box'
 	},
 
-	rightside: {
-		flex: '1',
-		backgroundImage: 'url('+''+')',
-		backgroundSize: 'cover',
-		backgroundRepeat: 'no-repeat',
-		backgroundPosition: 'right top',
+	submit: {
+		padding: '6px 12px',
+		display: 'block',
+		width: '100%',
+		padding: '12px 24px',
+		color:'white',
+		border:'0px',
+		fontSize:'15px',
+		backgroundColor:'#42A9C7',
+		cursor:'pointer'
+
+	},
+
+	error: {
+		background: '#ff0000ba',
+		color: 'white',
+		textAlign: 'center',
+		padding: '6px',
 	}
 
 };
 
 const mapStateToProps = (state, ownProps) => ({
 	authenticated: state.auth.authenticated,
+	error: state.auth.error,
+	error_message: state.auth.error_message,
 })
-
-//const mapDispatchToProps = null;
 
 export default connect(
 	mapStateToProps,
-	// mapDispatchToProps,
 	actions,
 )(Login)
 
