@@ -49,6 +49,11 @@ const styles = theme => ({
   },
   Button: {
     float: 'right',
+    margin:'50px 5px 15px 20px'
+  },
+  titulo: {
+    
+    margin:'10px 5px 15px 30px'
   },
 });
 
@@ -196,7 +201,7 @@ console.log(actions);
           onClose={this.props.toggle}
         >
           <div style={getModalStyle()} className={classes.paper}>
-            <Typography variant="title" id="modal-title">
+            <Typography variant="title" className={classes.titulo} id="modal-title">
               {this.props.title}
             </Typography>
             <form className={classes.container} noValidate autoComplete="off">

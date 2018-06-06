@@ -498,11 +498,11 @@ class App extends Component {
 						<IconButton color="inherit" className={classes.button} aria-label="Delete">
 							<DashboardIcon />
 						</IconButton>
-						<IconButton color="inherit" className={classes.button} aria-label="Delete">
-							<Token onClick={this.toggle} />
+						<IconButton color="inherit" onClick={this.toggle} className={classes.button} aria-label="Delete">
+							<Token  />						
 						</IconButton>	
-						<IconButton color="inherit" className={classes.button} aria-label="Delete">
-							<SettingsIcon onClick={this.toggle_seccion} />
+						<IconButton color="inherit" onClick={this.toggle_seccion} className={classes.button} aria-label="Delete">
+							<SettingsIcon  />
 						</IconButton>
 						<IconButton
 							color="inherit"
