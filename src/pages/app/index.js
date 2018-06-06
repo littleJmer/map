@@ -133,12 +133,11 @@ class App extends Component {
 
     paginas (token_facebook) {
     	 let urlfb = 'https://graph.facebook.com/v3.0/me';
-<<<<<<< HEAD
         let token = 'EAACEdEose0cBAM8ZBAwqi0RhRKsOdb3QIlbm77bYrpIQ2Om1QBEisi6e30dZB6gs2Y83XtH9GthxjBbjpFZAhToCNIdK5IVjBMtQkTQjAF4LBOZAZAL28CJq3bOFn70ZBf8XxJ4tk24xyhIj74ZA7Sesw9QERS66wHeZADgcvGq95EcZAZB3gzmKD1WGgSIllxHCxaZA4OVYHk8vwZDZD';
-=======
+
         let token = token_facebook;
         console.log(token_facebook);
->>>>>>> c6b367da7713ab64a7f6668ed8beab1202311b9f
+
         let consulta = '?fields=accounts%7Bname%2Caccess_token%7D&access_token=';
         let paginas = [];
         let _self = this;
