@@ -67,14 +67,11 @@ const styles = theme => ({
 });
 
 
-const D3 = [				
+const D3 = [
 	{has: '#ensenada54', lat: 31.8664105,lng:-116.6111767},
 	{has: '#ensenada93',lat: 31.855366, lng: -116.584063},	
 	{has: '#ensenada114',lat: 31.832876, lng: -116.597712},	
 ];
-
-
-
 
 class App extends Component {
 
@@ -88,7 +85,14 @@ class App extends Component {
 			anchorEl: null,
 			paginas : [],
 			publicaciones : [],
-			reacciones : [{sad: 0},{like: 0},{love: 0},{haha: 0},{angry: 0},{wow: 0}],
+			reacciones : [{
+				sad: 0,
+				like: 0,
+				love: 0,
+				haha: 0,
+				angry: 0,
+				wow: 0
+			}],
 			lat : '',
 			long : '',
 			zoom : '',
@@ -100,8 +104,9 @@ class App extends Component {
 
 		this._handleChangeSelect = this._handleChangeSelect.bind(this);
 		this._handleChangeTab = this._handleChangeTab.bind(this);
-		 this.toggle 			= this.toggle.bind(this);
-		  this.toggle_seccion 			= this.toggle_seccion.bind(this);
+		this.toggle = this.toggle.bind(this);
+		this.toggle_seccion = this.toggle_seccion.bind(this);
+
 	}
 
 	componentDidMount() {
@@ -259,101 +264,96 @@ class App extends Component {
 
 	_handleChangeSelect(e) {
 		
-		if(e.target.name === "page"){
-		let {paginas} = this.state;
-		let index = e.target.value;
-		let token = paginas[index].token;
-		let id_page = paginas[index].value;
-		let publicaciones = [];
-		let self = this;
-		let circulos=[];
+		if(e.target.name === "page") {
 
-		let urlfb = 'https://graph.facebook.com/v3.0/'+id_page+'?fields=posts&access_token=';
+			let {paginas} = this.state;
+			let index = e.target.value;
+			let token = paginas[index].token;
+			let id_page = paginas[index].value;
+			let publicaciones = [];
+			let self = this;
+			let circulos=[];
 
-        axios.get(urlfb+token)
-        .then(response => {
-           
-			
-		
+			let urlfb = 'https://graph.facebook.com/v3.0/'+id_page+'?fields=posts&access_token=';
 
-			
-             response.data.posts.data.some(function(obj) {
-             	
-             	if(obj.message){
-             		var regex = /#ensenada?\d+/;
-					var match = regex.exec(obj.message);
-				//	console.log(match[0]);  // has
-					const resultado = D3.find( seccion => seccion.has === match[0] );
-				//	console.log(resultado); // { nombre: 'cerezas', cantidad: 5 }
-					if (typeof(resultado) !== "undefined") {
-						circulos.push({                        
-							lat : resultado["lat"],                 
-							lng : resultado["lng"],
+			axios.get(urlfb+token)
+			.then(response => {
+
+				response.data.posts.data.some(function(obj) {
+
+					if(obj.message) {
+
+						var regex = /#ensenada?\d+/;
+						var match = regex.exec(obj.message);
+
+						if(match !== null) {
+
+							const resultado = D3.find( seccion => seccion.has === match[0] );
+
+							if (typeof(resultado) !== "undefined") {
+								circulos.push({
+									lat : resultado["lat"],
+									lng : resultado["lng"],
+								});
+							}
+
+						}
+
+						publicaciones.push({
+							value : obj.id,
+							label : obj.message.substring(0,35)+"...",
+							token : obj.access_token
 						});
+
 					}
-					
 
+					self.setState({
+						circulos:circulos,
+						publicaciones : publicaciones,
+					});
 
-				   		publicaciones.push({                        
-                        value : obj.id,
-                       //label : obj.message.substring(0,35)+"...",
-                       label : obj.message,
-                       token : obj.access_token,
+				});
 
+				self.coordenadas(id_page);
 
-                    });
+			});
 
+		} // end Pages if
 
-             	}
-             		//console.log(circulos);
+		else if(e.target.name === "post") {
 
-                    self.setState({
-                    	circulos:circulos,
-                        publicaciones : publicaciones,
-                    }); 
-                              
-                });
+			let page = this.state.page;
+			let {paginas ,publicaciones} = this.state;
+			let idPublicacion = publicaciones[ e.target.value ].value;
+			let page_token = paginas[page].token;
+			let reacciones = [];
+			let self = this;
+			let query = "?fields=reactions.type(LIKE).limit(0).summary(total_count).as(LIKE)%2Creactions.type(LOVE).limit(0).summary(total_count).as(LOVE)%2Creactions.type(SAD).limit(0).summary(total_count).as(SAD)%2Creactions.type(WOW).limit(0).summary(total_count).as(WOW)%2Creactions.type(ANGRY).limit(0).summary(total_count).as(ANGRY)%2Creactions.type(HAHA).limit(0).summary(total_count).as(HAHA)";
+			let url_fb = "https://graph.facebook.com/v3.0/"
+			let access_token = "&access_token="+page_token;
 
-   self.coordenadas(id_page);
-            });
-     
-        
-    }
+			axios.get(url_fb+idPublicacion+query+access_token)
+			.then(response => {
 
-    else if(e.target.name === "post"){
-    	//console.log(e.target.value)
-    	let page = this.state.page;
-        let {paginas ,publicaciones} = this.state;
-        let idPublicacion = publicaciones[ e.target.value ].value;
-        //console.log(page)
-        let page_token = paginas[page].token;
-        let reacciones = [];
-        let self = this;
-        let query = "?fields=reactions.type(LIKE).limit(0).summary(total_count).as(LIKE)%2Creactions.type(LOVE).limit(0).summary(total_count).as(LOVE)%2Creactions.type(SAD).limit(0).summary(total_count).as(SAD)%2Creactions.type(WOW).limit(0).summary(total_count).as(WOW)%2Creactions.type(ANGRY).limit(0).summary(total_count).as(ANGRY)%2Creactions.type(HAHA).limit(0).summary(total_count).as(HAHA)";
-        let url_fb = "https://graph.facebook.com/v3.0/"
-        let access_token = "&access_token="+page_token;
-        
-        axios.get(url_fb+idPublicacion+query+access_token)
-        .then(response => {
-            //console.log(response.data.ANGRY.summary.total_count)
-            reacciones.push({  
-                angry : response.data.ANGRY.summary.total_count,
-                haha : response.data.HAHA.summary.total_count,
-                love : response.data.LOVE.summary.total_count,
-                like : response.data.LIKE.summary.total_count,
-                sad : response.data.SAD.summary.total_count,
-                wow : response.data.WOW.summary.total_count,
-            });
+				reacciones.push({  
+					angry : response.data.ANGRY.summary.total_count,
+					haha : response.data.HAHA.summary.total_count,
+					love : response.data.LOVE.summary.total_count,
+					like : response.data.LIKE.summary.total_count,
+					sad : response.data.SAD.summary.total_count,
+					wow : response.data.WOW.summary.total_count,
+				});
 
-            self.setState({
-                reacciones : reacciones,
-            }); 
+				self.setState({
+					reacciones : reacciones,
+				});
 
-            //console.log(this.state.reacciones)
-        });
-    }
-		
+			});
+
+		}
+
 		this.setState({ [e.target.name]: e.target.value });
+
 	}
 
 
@@ -479,17 +479,15 @@ class App extends Component {
 		const { classes } = this.props;
 
 		let {lat , long , zoom , kmz , reacciones,circulos} = this.state;
-		//console.log(reacciones)
-		//console.log(reacciones['0'].sad)
-		//console.log(lat+'   '+long +" " + zoom)
-		////console.log(this.state.publicaciones);
 
 		const { tab, auth, anchorEl , paginas , publicaciones} = this.state;
 		const open = Boolean(anchorEl);
 		
 		const { from } = this.props.location.state || { from: { pathname: "/" } };
+
 		if(!this.props.auth.authenticated)
 			return <Redirect to={from} />;
+
 		return(
 			<Grid container className={classes.root} spacing={8}>
 				<AppBar>
@@ -504,9 +502,8 @@ class App extends Component {
 							<Token  />						
 						</IconButton>	
 						<IconButton color="inherit" onClick={this.toggle_seccion} className={classes.button} aria-label="Delete">
-							<SettingsIcon  />						
-						</IconButton>	
-											
+							<SettingsIcon  />
+						</IconButton>
 						<IconButton
 							color="inherit"
 							className={classes.button}
@@ -516,7 +513,6 @@ class App extends Component {
 						>
 							<AccountCircle />
 						</IconButton>
-
 						<Menu
 							id="menu-appbar"
 							anchorEl={anchorEl}
@@ -540,66 +536,93 @@ class App extends Component {
 				</AppBar>
 				<Grid item xs={12}>
 					<Paper className={classes.paper}>
-						<FormControl className={classes.formControl}>
-							<InputLabel htmlFor="page-helper">Facebook page</InputLabel>
-							<Select
-								value={this.state.page}
-								onChange={this._handleChangeSelect}
-								input={<Input name="page" id="page-helper" />}
-							>
-							{
-							paginas.map((key , index) => (
-									<MenuItem value={index} token={key.token} key={index}>{key.label}</MenuItem>
-								))
-							}
-								
-							</Select>
-							<FormHelperText>Please select a facebook page</FormHelperText>
-						</FormControl>
+						<Grid container>
+							<Grid item xs={2}>
+								<FormControl className={classes.formControl}>
+									<InputLabel htmlFor="page-helper">Facebook page</InputLabel>
+									<Select
+										value={this.state.page}
+										onChange={this._handleChangeSelect}
+										input={<Input name="page" id="page-helper" />}
+									>
+									{
+									paginas.map((key , index) => (
+											<MenuItem value={index} token={key.token} key={index}>{key.label}</MenuItem>
+										))
+									}
+										
+									</Select>
+									<FormHelperText>Please select a facebook page</FormHelperText>
+								</FormControl>
+							</Grid>
+							<Grid item xs={2}>
+								<FormControl className={classes.formControl}>
+									<InputLabel htmlFor="post-helper">Facebook post</InputLabel>
+									<Select
+										value={this.state.post}
+										onChange={this._handleChangeSelect}
+										input={<Input name="post" id="page-helper" />}
+									>
+									{
+										publicaciones.map((key , index) => (
+												<MenuItem value={index} key={index}>{key.label}</MenuItem>
+										))
+									}
+									</Select>
+									<FormHelperText>Please select a facebook post</FormHelperText>
+								</FormControl>
+							</Grid>
+						</Grid>
 					</Paper>
 				</Grid>
-				<Grid item xs={12}>
+				<Grid item xs={1}>
+					<Paper style={{height: '532px'}}>
+						<List>
+							<ListItem>
+								<img src={Sad} widht="35px" height="35px"/> 
+								<ListItemText primary={  reacciones['0'].sad } />
+							</ListItem>
+							<ListItem>
+								<img src={Wow} widht="35px" height="35px"/> <br/>
+								<ListItemText primary={  reacciones['0'].wow }  />
+							</ListItem>
+							<ListItem>
+								<img src={Like} widht="35px" height="35px"/> <br/>
+								<ListItemText primary={ reacciones['0'].like  } />
+							</ListItem>
+							<ListItem>
+								<img src={Love} widht="35px" height="35px"/> <br/>
+								<ListItemText primary={  reacciones['0'].love  }  />
+							</ListItem>
+							<ListItem>
+								<img src={Haha} widht="35px" height="35px"/> <br/>
+								<ListItemText primary={  reacciones['0'].haha }  />
+							</ListItem>
+							<ListItem>
+								<img src={Angry} widht="35px" height="35px"/> <br/>
+								<ListItemText primary={  reacciones['0'].angry  } />
+							</ListItem>
+						</List>
+					</Paper>
+				</Grid>
+				<Grid item xs={11}>
 					<Paper className={classes.paper}>
 						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz} circulos={circulos} color={"#800000"}/>
 					</Paper>
 				</Grid>
-				<Grid item xs={12}>
-					<Paper className={classes.paper}>
-						<FormControl className={classes.formControl}>
-							<InputLabel htmlFor="post-helper">Facebook post</InputLabel>
-							<Select
-								value={this.state.post}
-								onChange={this._handleChangeSelect}
-								input={<Input name="post" id="page-helper" />}
-							>
-							{
-								publicaciones.map((key , index) => (
-										<MenuItem value={index} key={index}>{key.label}</MenuItem>
-								))
-							}
-							</Select>
-							<FormHelperText>Please select a facebook post</FormHelperText>
-						</FormControl>
-					</Paper>
-				</Grid>
 				 {
-                   this.state.modal_token&& 
-                   <Modal 
-                 open={this.state.modal_token} 
-                 toggle={this.toggle} 
-                  
-                
-                />
-                }
-                
-                   <ModalSeccion 
-                 open={this.state.modal_secciones} 
-                 toggle={this.toggle_seccion} 
-                  
-                
-                />
-                
-				<Grid item xs={12}>
+					this.state.modal_token&& 
+						<Modal 
+							open={this.state.modal_token} 
+							toggle={this.toggle}
+						/>
+				}
+				<ModalSeccion 
+					open={this.state.modal_secciones} 
+					toggle={this.toggle_seccion} 
+				/>
+
+				{/*<Grid item xs={12}>
 					<Paper className={classes.paper}>
 						<Tabs
 							value={this.state.tab}
@@ -611,58 +634,12 @@ class App extends Component {
 							<Tab label="Google Analytics" icon={<GoogleIcon />} />
 							<Tab label="Land" icon={<TierraIcon />} />
 						</Tabs>
-						{tab === 0 && 
-							<Grid container spacing={24}>
-						        <Grid item xs={4}>
-						          
-						        </Grid>
-						        <Grid item xs={4}>
-						          <List>
-						        <ListItem>
-						          <Avatar>
-						           <img src={Sad} widht="50px" height="50px"/> 
-						          </Avatar>
-						          <ListItemText primary={  reacciones['0'].sad } />
-						        </ListItem>
-						        <ListItem>
-						          <Avatar>
-						          <img src={Wow} widht="50px" height="50px"/> <br/>
-						          </Avatar>
-						          <ListItemText primary={  reacciones['0'].wow }  />
-						        </ListItem>
-						        <ListItem>
-						          <Avatar>
-						           <img src={Like} widht="50px" height="50px"/> <br/>
-						          </Avatar>
-						          <ListItemText primary={ reacciones['0'].like  } />
-						        </ListItem>
-						        <ListItem>
-						          <Avatar>
-						           <img src={Love} widht="50px" height="50px"/> <br/>
-						          </Avatar>
-						          <ListItemText primary={  reacciones['0'].love  }  />
-						        </ListItem>
-						        <ListItem>
-						          <Avatar>
-						          <img src={Haha} widht="50px" height="50px"/> <br/>
-						          </Avatar>
-						          <ListItemText primary={  reacciones['0'].haha }  />
-						        </ListItem>
-						        <ListItem>
-						          <Avatar>
-						          <img src={Angry} widht="50px" height="50px"/> <br/>
-						          </Avatar>
-						          <ListItemText primary={  reacciones['0'].angry  } />
-						        </ListItem>
-						      </List>
-						        </Grid>
-						    </Grid>
-							
-						}
+						{tab === 0 && <Typography>Item Two</Typography>}
 						{tab === 1 && <Typography>Item Two</Typography>}
 						{tab === 2 && <Typography>Item Three</Typography>}
 					</Paper>
-				</Grid>
+				</Grid>*/}
+
 			</Grid>
 		)
 	}

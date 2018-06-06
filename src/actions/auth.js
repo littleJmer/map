@@ -4,7 +4,7 @@ export const signin = (params) => {
 
     return (dispatch) => {
         
-        if( params.username === 'adsnimblin006@outlook.com' || 
+        if( params.username === 'adsnimblin006@outlook.com' && 
             params.password === '0699711232' ) {
 
             dispatch({type: 'AUTH_SIGNIN_SUCCESS'});
