@@ -131,6 +131,7 @@ export default class Map extends Component {
          * O SI EL ZOOM HA CAMBIADO
          *
          */
+
         
         if ((this.props.lat != nextProps.lat && 
             this.props.lng != nextProps.lng) || 
@@ -157,12 +158,22 @@ export default class Map extends Component {
 
             console.log("pintando circulo", circulo);
 
+            let fillColor = '#1E90FF';
+
+            console.log('->', circulo);
+            console.log('->', nextProps);
+
+            if(circulo.lat == nextProps.lat && circulo.lng == nextProps.lng ) {
+                fillColor = nextProps.color;
+                console.log("estamos en el circulo");
+            }
+
             let cityCircle = new window.google.maps.Circle({
                 strokeColor: '#1E90FF',
                 strokeOpacity: 0.8,
                 strokeWeight: 2,
-                fillColor: '#1E90FF',
-                fillOpacity: 0.35,
+                fillColor: fillColor,
+                fillOpacity: 1,
                 map: map,
                 center: circulo,
                 radius: 1000

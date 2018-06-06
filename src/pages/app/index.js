@@ -93,6 +93,7 @@ class App extends Component {
 				angry: 0,
 				wow: 0
 			}],
+			color: '',
 			lat : '',
 			long : '',
 			zoom : '',
@@ -284,17 +285,14 @@ class App extends Component {
 
 					if(obj.message) {
 
-						var regex = /#ensenada?\d+/;
-						var match = regex.exec(obj.message);
+						let regex = /#ensenada?\d+/;
+						let match = regex.exec(obj.message);
+						let hash = null;
 
 						if(match !== null) {
 
 							matches.push(match[0]);
-							matches.push(match[0]);
-							matches.push(match[0]);
-							matches.push(match[0]);
-							matches.push(match[0]);
-							matches.push(match[0]);
+							hash = match[0];
 
 							// const resultado = D3.find( seccion => seccion.has === match[0] );
 
@@ -310,7 +308,8 @@ class App extends Component {
 						publicaciones.push({
 							value : obj.id,
 							label : obj.message.substring(0,35)+"...",
-							token : obj.access_token
+							token : obj.access_token,
+							hash: hash
 						});
 
 					}
@@ -324,8 +323,36 @@ class App extends Component {
 
 				}).then(response => {
 
+					let circulos = response.data
+					// publicaciones
+
+					// console.log("circulos --->", circulos);
+					// console.log("publicaciones --->", publicaciones);
+
+					for(let i in circulos) {
+
+						let has = circulos[i].has;
+
+						for(let j in publicaciones) {
+
+							let pub = publicaciones[j];
+
+							// console.log(has, pub.hash);
+
+							if(pub.hash == has) {
+								publicaciones[j].lat = circulos[i].lat;
+								publicaciones[j].lng = circulos[i].lng;
+							}
+
+						}
+
+					}
+
+
+					// console.log("final -->", publicaciones);
+
 					self.setState({
-						circulos: response.data,
+						circulos: circulos,
 						publicaciones : publicaciones,
 					});
 
@@ -355,21 +382,54 @@ class App extends Component {
 			let url_fb = "https://graph.facebook.com/v3.0/"
 			let access_token = "&access_token="+page_token;
 
-			axios.get(url_fb+idPublicacion+query+access_token)
-			.then(response => {
+			axios.get(url_fb+idPublicacion+query+access_token).then(response => {
 
 				reacciones.push({  
-					angry : response.data.ANGRY.summary.total_count,
-					haha : response.data.HAHA.summary.total_count,
-					love : response.data.LOVE.summary.total_count,
-					like : response.data.LIKE.summary.total_count,
-					sad : response.data.SAD.summary.total_count,
-					wow : response.data.WOW.summary.total_count,
+					angry : response.data.ANGRY.summary.total_count, //
+					haha : response.data.HAHA.summary.total_count, //
+					love : response.data.LOVE.summary.total_count, //
+					like : response.data.LIKE.summary.total_count, //
+					sad : response.data.SAD.summary.total_count, //
+					wow : response.data.WOW.summary.total_count, //
 				});
 
-				self.setState({
-					reacciones : reacciones,
-				});
+				self.setState({reacciones : reacciones,});
+
+				let neg = parseInt(response.data.ANGRY.summary.total_count) + parseInt(response.data.SAD.summary.total_count);
+				let pos = parseInt(response.data.LOVE.summary.total_count) + parseInt(response.data.LIKE.summary.total_count) + parseInt(response.data.WOW.summary.total_count);
+
+				if(pos > neg)
+					this.setState({color: '#1E90FF'});
+				else if(neg > pos)
+					this.setState({color: '#ff3300'});
+				else
+					this.setState({color: '#ff6600'});
+
+				// console.log(self.state.publicaciones);
+				// console.log(idPublicacion);
+
+				for(let i in self.state.publicaciones) {
+
+					let r = self.state.publicaciones[i];
+
+					if(r.value == idPublicacion) {
+
+						self.setState({
+							lat: r.lat,
+							long: r.lng,
+							zoom: 12,
+						});
+
+						// #1E90FF azul
+						// #ff6600 naranja
+						// #ff3300 rojo
+
+						console.log(':) -->', r.lat, r.lng);
+
+						// return;
+					}
+
+				}
 
 			});
 
@@ -462,7 +522,6 @@ class App extends Component {
                     // kmz : 'secciones',
                 });
 				break;
-				
 				
 			
 		}
@@ -630,7 +689,7 @@ class App extends Component {
 				</Grid>
 				<Grid item xs={11}>
 					<Paper className={classes.paper}>
-						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz} circulos={circulos} color={"#800000"}/>
+						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz} circulos={circulos} color={this.state.color}/>
 					</Paper>
 				</Grid>
 				 {
