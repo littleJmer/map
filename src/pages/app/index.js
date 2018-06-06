@@ -9,6 +9,7 @@ import { Redirect } from "react-router-dom";
 import { connect } from 'react-redux'
 
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 import {
 	Grid,
@@ -59,6 +60,14 @@ const styles = theme => ({
 });
 
 
+const D3 = [				
+	{has: '#ensenada54', lat: 31.8664105,lng:-116.6111767},
+	{has: '#ensenada93',lat: 31.855366, lng: -116.584063},	
+	{has: '#ensenada114',lat: 31.832876, lng: -116.597712},	
+];
+
+
+
 
 class App extends Component {
 
@@ -77,6 +86,7 @@ class App extends Component {
 			long : '',
 			zoom : '',
 			kmz : 'distritos.kmz',
+			circulos:[]
 		};
 
 		this._handleChangeSelect = this._handleChangeSelect.bind(this);
@@ -92,7 +102,7 @@ class App extends Component {
 
     paginas () {
     	 let urlfb = 'https://graph.facebook.com/v3.0/me';
-        let token = 'EAACEdEose0cBAIl4ZCJhhOp32ckrbZBrAg5k5bY52PfBE3yGZBTU8ZANrXF9lW2J7Jdq15ZB5MybZCQyv0anZC7ibv7PGsUZCZC0lM2hqSUMZBIUxm5UvLHkqbemZBa1cZAFqK5lqi9GeAeTqd71RSZABjnQVo3EVZAhgFZAw60eUwGsMPeJ6PLAZB00ZC6cwjpGWwFdglBCZBy5eQtQGIQQZDZD';
+        let token = 'EAACEdEose0cBAApECxKhHDrheMHTEsa2IazaTA1iHmVC184z8gMOQa8Qr1ZAWnTG6zZBIncjlHRVZAqRuWJYCqGaciUShDzGZANusyEZBcyVyewq8enB1NR40WmnQIhPZBJ6qfwmZBGZCepZCRZAsWc0kGuwC8pB3vFjZB2OfDR38JYyyxX5ARfV1tgAlCcqxK92aUKMSwUj0SxjA6avnMg8hfz';
         let consulta = '?fields=accounts%7Bname%2Caccess_token%7D&access_token=';
         let paginas = [];
         let _self = this;
@@ -100,6 +110,8 @@ class App extends Component {
         .then(response => {
              response.data.accounts.data.some(function(obj) {
                     paginas.push({
+
+						
                         
                         value : obj.id,
                         label : obj.name,
@@ -205,40 +217,66 @@ class App extends Component {
 		let id_page = paginas[index].value;
 		let publicaciones = [];
 		let self = this;
+		let circulos=[];
 
 		let urlfb = 'https://graph.facebook.com/v3.0/'+id_page+'?fields=posts&access_token=';
 
         axios.get(urlfb+token)
         .then(response => {
-            
+           
+			
+		
+
+			
              response.data.posts.data.some(function(obj) {
-             	if(obj.message)
-                    publicaciones.push({
-                        
+             	
+             	if(obj.message){
+             		var regex = /#ensenada?\d+/;
+					var match = regex.exec(obj.message);
+				//	console.log(match[0]);  // has
+					const resultado = D3.find( seccion => seccion.has === match[0] );
+				//	console.log(resultado); // { nombre: 'cerezas', cantidad: 5 }
+					if (typeof(resultado) !== "undefined") {
+						circulos.push({                        
+							lat : resultado["lat"],                 
+							lng : resultado["lng"],
+						});
+					}
+					
+
+
+				   		publicaciones.push({                        
                         value : obj.id,
-                        label : obj.message.substring(0,35)+"...",
-                        token : obj.access_token,
+                       //label : obj.message.substring(0,35)+"...",
+                       label : obj.message,
+                       token : obj.access_token,
 
 
                     });
 
+
+             	}
+             		//console.log(circulos);
+
                     self.setState({
+                    	circulos:circulos,
                         publicaciones : publicaciones,
                     }); 
                               
                 });
 
-
+   self.coordenadas(id_page);
             });
-        this.coordenadas(id_page);
+     
+        
     }
 
     else if(e.target.name === "post"){
-    	console.log(e.target.value)
+    	//console.log(e.target.value)
     	let page = this.state.page;
         let {paginas ,publicaciones} = this.state;
         let idPublicacion = publicaciones[ e.target.value ].value;
-        console.log(page)
+        //console.log(page)
         let page_token = paginas[page].token;
         let reacciones = [];
         let self = this;
@@ -248,7 +286,7 @@ class App extends Component {
         
         axios.get(url_fb+idPublicacion+query+access_token)
         .then(response => {
-            console.log(response.data.ANGRY.summary.total_count)
+            //console.log(response.data.ANGRY.summary.total_count)
             reacciones.push({  
                 angry : response.data.ANGRY.summary.total_count,
                 haha : response.data.HAHA.summary.total_count,
@@ -262,7 +300,7 @@ class App extends Component {
                 reacciones : reacciones,
             }); 
 
-            console.log(this.state.reacciones)
+            //console.log(this.state.reacciones)
         });
     }
 		
@@ -335,6 +373,19 @@ class App extends Component {
                     kmz : 'secciones',
                 });
 				break;
+
+           //fail
+			case  "591668464524390":
+				this.setState({
+                    lat : 31.865930,
+                    long : -116.597069,
+                    zoom : 13,
+                    kmz : 'secciones',
+                });
+				break;
+				
+				
+			
 		}
 	}
 
@@ -371,11 +422,11 @@ class App extends Component {
 
 		const { classes } = this.props;
 
-		let {lat , long , zoom , kmz , reacciones} = this.state;
-		console.log(reacciones)
-		console.log(reacciones['0'].sad)
-		console.log(lat+'   '+long +" " + zoom)
-		console.log(this.state.publicaciones);
+		let {lat , long , zoom , kmz , reacciones,circulos} = this.state;
+		//console.log(reacciones)
+		//console.log(reacciones['0'].sad)
+		//console.log(lat+'   '+long +" " + zoom)
+		////console.log(this.state.publicaciones);
 
 		const { tab, auth, anchorEl , paginas , publicaciones} = this.state;
 		const open = Boolean(anchorEl);
@@ -448,7 +499,7 @@ class App extends Component {
 				</Grid>
 				<Grid item xs={12}>
 					<Paper className={classes.paper}>
-						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz}/>
+						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz} circulos={circulos} color={"#800000"}/>
 					</Paper>
 				</Grid>
 				<Grid item xs={12}>

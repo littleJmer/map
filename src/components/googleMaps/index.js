@@ -60,27 +60,44 @@ export default class Map extends Component {
             var center = new window.google.maps.LatLng(nextProps.lat, nextProps.lng);
             map.panTo(center);
             map.setZoom(nextProps.zoom); 
-            var cityCircle = new window.google.maps.Circle({
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                // fillColor: '#FF0000',
-                // fillOpacity: .2,
-                map: map,
-                center: {lat: 31.855366, lng: -116.584063},
-                radius: 1000
-            });
+            console.log("mapa")
+            console.log(this.props.circulos)
+            for (var i = this.props.circulos.length - 1; i >= 0; i--) {
+               
+                var lat =this.props.circulos[i]["lat"];
+                var lng =this.props.circulos[i]["lng"];
 
-            var cityCircle = new window.google.maps.Circle({
-                strokeColor: '#FF0000',
-                strokeOpacity: 0.8,
-                strokeWeight: 2,
-                // fillColor: '#FF0000',
-                // fillOpacity: .2,
-                map: map,
-                center: {lat: 31.832876, lng: -116.597712},
-                radius: 1000
-            });
+                if(i===0){
+                    var cityCircle = new window.google.maps.Circle({
+                        strokeColor: this.props.color,
+                        strokeOpacity: 1,
+                        strokeWeight: 5,
+                        // fillColor: '#FF0000',
+                        // fillOpacity: .2,
+                        map: map,
+                        center: {lat: lat, lng: lng},
+                        radius: 1000
+                    });
+
+                }else{
+                    var cityCircle = new window.google.maps.Circle({
+                        strokeColor: '#FF0000',
+                        strokeOpacity: 1,
+                        strokeWeight: 5,
+                        // fillColor: '#FF0000',
+                        // fillOpacity: .2,
+                        map: map,
+                        center: {lat: lat, lng: lng},
+                        radius: 1000
+                    });
+                }
+               
+
+
+            }
+            
+
+          
 
         }
         
