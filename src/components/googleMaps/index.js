@@ -156,15 +156,17 @@ export default class Map extends Component {
         var image = {
             url: myIcon[2],
             size: new window.google.maps.Size(60, 60),
-            scaledSize: new window.google.maps.Size(20, 20),
+            scaledSize: new window.google.maps.Size(40, 40),
             origin: new window.google.maps.Point(-15,0)
         }
         var image2 = 'https://i.imgur.com/wVAJS8Tr.png';
 
+
         for(let x=0 ; x<15 ; x++){
             let randompos = Math.floor(Math.random() * (100 - 1)) + 1;
+            let latlng = new window.google.maps.LatLng( randomPoints[randompos]["Lat"] ,randomPoints[randompos]['Lng'] );
             var marker = new window.google.maps.Marker({
-                position : { lat:randomPoints[randompos]["Lat"] ,lng: randomPoints[randompos]['Lng'] },
+                position : latlng,
                 map: map,
                 title: 'Hello World!',
                 icon : image
@@ -173,7 +175,8 @@ export default class Map extends Component {
             marker.setMap(map);
            
         }
-         let myoverlay = new window.google.maps.OverlayView();
+        
+        let myoverlay = new window.google.maps.OverlayView();
 
         myoverlay.draw = function () {
           // add an id to the layer that includes all the markers so you can use it in CSS

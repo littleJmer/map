@@ -133,7 +133,7 @@ class App extends Component {
 
     paginas (token_facebook) {
     	 let urlfb = 'https://graph.facebook.com/v3.0/me';
-        let token = 'EAACEdEose0cBAM8ZBAwqi0RhRKsOdb3QIlbm77bYrpIQ2Om1QBEisi6e30dZB6gs2Y83XtH9GthxjBbjpFZAhToCNIdK5IVjBMtQkTQjAF4LBOZAZAL28CJq3bOFn70ZBf8XxJ4tk24xyhIj74ZA7Sesw9QERS66wHeZADgcvGq95EcZAZB3gzmKD1WGgSIllxHCxaZA4OVYHk8vwZDZD';
+        //let token = 'EAACEdEose0cBAM8ZBAwqi0RhRKsOdb3QIlbm77bYrpIQ2Om1QBEisi6e30dZB6gs2Y83XtH9GthxjBbjpFZAhToCNIdK5IVjBMtQkTQjAF4LBOZAZAL28CJq3bOFn70ZBf8XxJ4tk24xyhIj74ZA7Sesw9QERS66wHeZADgcvGq95EcZAZB3gzmKD1WGgSIllxHCxaZA4OVYHk8vwZDZD';
 
         let token = token_facebook;
         console.log(token_facebook);
