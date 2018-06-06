@@ -273,6 +273,7 @@ class App extends Component {
 			let publicaciones = [];
 			let self = this;
 			let circulos=[];
+			let matches=[];
 
 			let urlfb = 'https://graph.facebook.com/v3.0/'+id_page+'?fields=posts&access_token=';
 
@@ -288,14 +289,21 @@ class App extends Component {
 
 						if(match !== null) {
 
-							const resultado = D3.find( seccion => seccion.has === match[0] );
+							matches.push(match[0]);
+							matches.push(match[0]);
+							matches.push(match[0]);
+							matches.push(match[0]);
+							matches.push(match[0]);
+							matches.push(match[0]);
 
-							if (typeof(resultado) !== "undefined") {
-								circulos.push({
-									lat : resultado["lat"],
-									lng : resultado["lng"],
-								});
-							}
+							// const resultado = D3.find( seccion => seccion.has === match[0] );
+
+							// if (typeof(resultado) !== "undefined") {
+							// 	circulos.push({
+							// 		lat : resultado["lat"],
+							// 		lng : resultado["lng"],
+							// 	});
+							// }
 
 						}
 
@@ -307,14 +315,29 @@ class App extends Component {
 
 					}
 
+				});
+
+				// find matches
+				request.post('/api/secciones_has/', {
+
+					matches: matches
+
+				}).then(response => {
+
 					self.setState({
-						circulos:circulos,
+						circulos: response.data,
 						publicaciones : publicaciones,
 					});
 
-				});
+					self.coordenadas(id_page);
 
-				self.coordenadas(id_page);
+
+				})
+				.catch(error => {
+
+					console.log(error);
+
+				});
 
 			});
 
@@ -365,7 +388,7 @@ class App extends Component {
                     lat : 32.493699,
                     long : -116.959654,
                     zoom : 12,
-                    kmz : 'secciones',
+                    // kmz : 'secciones',
                 });
 				break;
 			//Celestino Salcedo Flores
@@ -374,7 +397,7 @@ class App extends Component {
                     lat : 32.619812,
                     long : -115.456473,
                     zoom : 12,
-                    kmz : 'secciones',
+                    // kmz : 'secciones',
                 });
 				break;
 			//Mario Madrigal
@@ -383,7 +406,7 @@ class App extends Component {
                     lat : 32.461746,
                     long : -117.043863,
                     zoom : 12,
-                    kmz : 'secciones',
+                    // kmz : 'secciones',
                 });
 				break;
 			//Adriana Lopez Quintero
@@ -392,7 +415,7 @@ class App extends Component {
                     lat : 32.155425,
                     long : -116.133693,
                     zoom : 8,
-                    kmz : 'secciones',              
+                    // kmz : 'secciones',              
  				});
 				break;
 			// /Erika Santana
@@ -401,7 +424,7 @@ class App extends Component {
                     lat : 32.493699,
                     long : -116.959654,
                     zoom : 12,
-                    kmz : 'secciones',
+                    // kmz : 'secciones',
                 });
 				break;
 			//Génesis Márquez Rubalcava
@@ -410,7 +433,7 @@ class App extends Component {
                     lat : 31.865930,
                     long : -116.597069,
                     zoom : 13,
-                    kmz : 'secciones',
+                    // kmz : 'secciones',
                 });
 				break;
 			//Lauro Aréstegui
@@ -419,14 +442,14 @@ class App extends Component {
                     lat : 32.619812,
                     long : -115.456473,
                     zoom : 12,
-                    kmz : 'secciones',
+                    // kmz : 'secciones',
                 });
             case "591668464524390":
             	this.setState({
                     lat : 31.865930,
                     long : -116.597069,
                     zoom : 13,
-                    kmz : 'secciones',
+                    // kmz : 'secciones',
                 });
 				break;
 
@@ -436,7 +459,7 @@ class App extends Component {
                     lat : 31.865930,
                     long : -116.597069,
                     zoom : 13,
-                    kmz : 'secciones',
+                    // kmz : 'secciones',
                 });
 				break;
 				

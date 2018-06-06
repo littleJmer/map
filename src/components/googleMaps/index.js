@@ -4,7 +4,7 @@ import { GoogleStyles } from './styles';
 import { ENS_54 } from './randomPoints'
 
 import distritos from './distritos.kml';
-import seccion from './setsion.kml';
+import secciones from './setsion.kml';
 
 import angry from './images/angry.png'
 import haha from './images/haha.png'
@@ -15,7 +15,8 @@ import wow from './images/wow.png'
 
 let map = null,
     myParser,
-    markers = [];
+    markers = [],
+    circles = [];
 
 const generateIcon = () => {
 
@@ -57,10 +58,8 @@ export default class Map extends Component {
          * CODIGO PARA PONER UN KML
          *
          */
-        
-        // myParser = new window.geoXML3.parser({ map: map });
-        // myParser.parse(seccion);
-        // console.log("se armo");
+        myParser = new window.geoXML3.parser({ map: map });
+        myParser.parse(secciones);
         
         /**
          *
@@ -99,16 +98,16 @@ export default class Map extends Component {
          * CODIGO PARA GENERAR UN CIRCULO EN EL MAPA
          *
          */
-         var cityCircle = new window.google.maps.Circle({
-            strokeColor: '#1E90FF',
-            strokeOpacity: 0.8,
-            strokeWeight: 2,
-            fillColor: '#1E90FF',
-            fillOpacity: 0.35,
-            map: map,
-            center: {lat: 31.832876, lng: -116.597712},
-            radius: 1000
-        });
+        //  var cityCircle = new window.google.maps.Circle({
+        //     strokeColor: '#1E90FF',
+        //     strokeOpacity: 0.8,
+        //     strokeWeight: 2,
+        //     fillColor: '#1E90FF',
+        //     fillOpacity: 0.35,
+        //     map: map,
+        //     center: {lat: 31.832876, lng: -116.597712},
+        //     radius: 1000
+        // });
 
          /**
           *
@@ -136,13 +135,43 @@ export default class Map extends Component {
         if ((this.props.lat != nextProps.lat && 
             this.props.lng != nextProps.lng) || 
             this.props.zoom != nextProps.zoom ) {
-        
-                var center = new window.google.maps.LatLng(nextProps.lat, nextProps.lng);
-                map.panTo(center);
-                map.setZoom(nextProps.zoom);
+
+            var center = new window.google.maps.LatLng(nextProps.lat, nextProps.lng);
+            map.panTo(center);
+            map.setZoom(nextProps.zoom);
+        }
+
+        // remove circles
+        for(let i in circles) {
+            let circulo = circles[i];
+            circulo.setMap(null);
+        }
+
+        circles.length = 0;
+
+        // paint circles
+        console.log(nextProps.circulos);
+        for(let i in nextProps.circulos) {
+
+            let circulo = nextProps.circulos[i];
+
+            console.log("pintando circulo", circulo);
+
+            let cityCircle = new window.google.maps.Circle({
+                strokeColor: '#1E90FF',
+                strokeOpacity: 0.8,
+                strokeWeight: 2,
+                fillColor: '#1E90FF',
+                fillOpacity: 0.35,
+                map: map,
+                center: circulo,
+                radius: 1000
+            });
+
+            circles.push(cityCircle);
 
         }
-        
+
     }
 
     render() {
