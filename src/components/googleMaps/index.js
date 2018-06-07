@@ -5,6 +5,7 @@ import { ENS_54 } from './randomPoints'
 
 import distritos from './distritos.kml';
 import secciones from './setsion.kml';
+import Se400 from './seccionesconcolores.kml';
 
 import angry from './images/angry.png'
 import haha from './images/haha.png'
@@ -59,7 +60,7 @@ export default class Map extends Component {
          *
          */
         myParser = new window.geoXML3.parser({ map: map });
-        myParser.parse(secciones);
+        myParser.parse(Se400);
         
         /**
          *
