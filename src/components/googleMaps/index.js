@@ -2,17 +2,20 @@ import React, { Component } from 'react'
 
 import { GoogleStyles } from './styles';
 import { ENS_54 } from './randomPoints'
+import { connect } from 'react-redux'
 
 import distritos from './distritos.kml';
 import secciones from './setsion.kml';
 import Se400 from './seccionesconcolores.kml';
 
-import angry from './images/angry.png'
-import haha from './images/haha.png'
-import like from './images/like.png'
-import love from './images/love.png'
-import sad from './images/sad.png'
-import wow from './images/wow.png'
+import angry from './images/angry.png';
+import haha from './images/haha.png';
+import like from './images/like.png';
+import love from './images/love.png';
+import sad from './images/sad.png';
+import wow from './images/wow.png';
+
+import * as actions from '../../actions/secciones.js';
 
 let map = null,
     myParser,
@@ -39,13 +42,22 @@ const generateIcon = () => {
 
 }
 
-export default class Map extends Component {
+ class Map extends Component {
 
     constructor(props) {
         super(props)
+        this.state={
+            coord : '',
+        }
+
+
     }
 
+
+
     componentDidMount() {
+
+        let _self = this;
 
         map = new window.google.maps.Map(document.getElementById('map'), {
             center: new window.google.maps.LatLng(31.8730604,-116.5898908),
@@ -59,8 +71,51 @@ export default class Map extends Component {
          * CODIGO PARA PONER UN KML
          *
          */
-        myParser = new window.geoXML3.parser({ map: map });
-        myParser.parse(Se400);
+        // myParser = new window.geoXML3.parser({ map: map });
+        // myParser.parse(Se400);
+
+        map.addListener('click', function(e) {
+            console.log(e);
+          });
+
+        var marker = new window.google.maps.Marker({
+            position: {lat: -25.363, lng: 131.044},
+            map: map,
+            title: 'Hello World!'
+          });
+
+        marker.addListener('click', function(e) {
+            console.log(e.latLng.lat());
+          });
+
+
+        // assign "useTheData" as the after parse function
+        var geoXml = new window.geoXML3.parser({map: map, afterParse: useTheData, singleInfoWindow: true,});
+        geoXml.parse(Se400); 
+
+        // function to retain closure on the placemark and associated text
+        function bindPlacemark(placemark, obj) {
+            window.google.maps.event.addListener(placemark,"click", function() {
+                //action
+                _self.props.getInfo(obj.name);
+                console.log(placemark)
+                
+                console.log(obj)
+
+            });
+
+
+        }
+
+        // "afterParse" function, adds click listener to each placemark to "alert" the name
+        function useTheData(doc) {
+          for (var i = 0; i < doc[0].placemarks.length; i++) {
+            var placemark = doc[0].placemarks[i].polygon || doc[0].placemarks[i].marker || doc[0].placemarks[i].polyline;
+            bindPlacemark(placemark, doc[0].placemarks[i]);
+           
+        }
+          
+        };
         
         /**
          *
@@ -118,9 +173,9 @@ export default class Map extends Component {
         // var center = new window.google.maps.LatLng(nextProps.lat, nextProps.lng);
         // map.panTo(center);
         
-        let myoverlay = new window.google.maps.OverlayView();
-        myoverlay.draw = function () { this.getPanes().markerLayer.id='markerLayer'; };
-        myoverlay.setMap(map);
+        // let myoverlay = new window.google.maps.OverlayView();
+        // myoverlay.draw = function () { this.getPanes().markerLayer.id='markerLayer'; };
+        // myoverlay.setMap(map);
 
     }
 
@@ -188,10 +243,16 @@ export default class Map extends Component {
 
     render() {
         return (
-            <div style={{ height: '500px', width: '100%' }}>
+            <div style={{ height: '600px', width: '100%' }}>
                 <div style={{ height: '100%', width: '100%' }} id="map"></div>
             </div>
         )
     }
 
 }
+
+
+export default connect(
+    null,
+    actions,
+)(Map)

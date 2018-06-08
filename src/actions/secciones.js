@@ -76,3 +76,25 @@ export const save = (item, callback) => {
 
 	}
 }
+
+export const getInfo = (seccion) => {
+	return (dispatch) => {
+		request.get('api/seccion/'+seccion)
+		.then(function(response)
+		{
+			console.log(response)
+			if(response.status === 200)
+			{
+				if(response.data.length > 0) {
+					dispatch({
+						type: 'INFO_OK',
+
+						payload: response.data[0]
+					});
+				}else {
+					dispatch({ type : 'INFO_FAIL' });
+				}
+			}
+		});
+	}
+}

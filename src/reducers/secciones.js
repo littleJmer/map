@@ -43,6 +43,18 @@ export default (state = initialState, action) => {
                 ...state,
                 saving: false,
             }
+        case 'INFO_OK':
+
+         return {
+                ...state,
+                data: action.payload,
+            }
+        case 'INFO_FAIL':
+
+        return {
+            ...state,
+            data: [],
+        }
 
         default:
             return state;

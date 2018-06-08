@@ -29,6 +29,7 @@ import TierraIcon from '@material-ui/icons/PinDrop';
 import GoogleIcon from '@material-ui/icons/Equalizer';
 import FacebookIcon from '@material-ui/icons/Share';
 import Token from '@material-ui/icons/CardMembership';
+import Cicle from '@material-ui/icons/Brightness1'
 
 
 
@@ -79,6 +80,7 @@ class App extends Component {
 		super(props)
 
 		this.state = {
+			tabActive : 0,
 			page: '',
 			post: '',
 			tab: 0,
@@ -101,12 +103,15 @@ class App extends Component {
 			circulos:[],
 			modal_token:false,
 			modal_secciones:false,
+
 		};
 
 		this._handleChangeSelect = this._handleChangeSelect.bind(this);
 		this._handleChangeTab = this._handleChangeTab.bind(this);
 		this.toggle = this.toggle.bind(this);
 		this.toggle_seccion = this.toggle_seccion.bind(this);
+		
+		this.myRef = React.createRef();
 
 	}
 
@@ -528,7 +533,7 @@ class App extends Component {
 	}
 
 	_handleChangeTab(e, v) {
-		this.setState({ 'tab': v });
+		this.setState({ 'tabActive': v });
 	}
 
 	_handleAccountMenu(event) {
@@ -567,10 +572,15 @@ class App extends Component {
 		
 		const { from } = this.props.location.state || { from: { pathname: "/" } };
 
+		let {tabActive} = this.state;
+
+		console.log(this.myRef)
+
 		if(!this.props.auth.authenticated)
 			return <Redirect to={from} />;
 
 		return(
+
 			<Grid container className={classes.root} spacing={8}>
 				<AppBar>
 					<Toolbar>
@@ -620,81 +630,112 @@ class App extends Component {
 						</Menu>
 					</Toolbar>
 				</AppBar>
-				<Grid item xs={12}>
-					<Paper className={classes.paper}>
-						<Grid container>
-							<Grid item xs={2}>
-								<FormControl className={classes.formControl}>
-									<InputLabel htmlFor="page-helper">Facebook page</InputLabel>
-									<Select
-										value={this.state.page}
-										onChange={this._handleChangeSelect}
-										input={<Input name="page" id="page-helper" />}
-									>
-									{
-									paginas.map((key , index) => (
-											<MenuItem value={index} token={key.token} key={index}>{key.label}</MenuItem>
-										))
-									}
-										
-									</Select>
-									<FormHelperText>Please select a facebook page</FormHelperText>
-								</FormControl>
-							</Grid>
-							<Grid item xs={2}>
-								<FormControl className={classes.formControl}>
-									<InputLabel htmlFor="post-helper">Facebook post</InputLabel>
-									<Select
-										value={this.state.post}
-										onChange={this._handleChangeSelect}
-										input={<Input name="post" id="page-helper" />}
-									>
-									{
-										publicaciones.map((key , index) => (
-												<MenuItem value={index} key={index}>{key.label}</MenuItem>
-										))
-									}
-									</Select>
-									<FormHelperText>Please select a facebook post</FormHelperText>
-								</FormControl>
-							</Grid>
-						</Grid>
-					</Paper>
-				</Grid>
-				<Grid item xs={1}>
+
+				<Grid item xs={4}>
 					<Paper style={{height: '532px'}}>
-						<List>
-							<ListItem>
-								<img src={Sad} widht="35px" height="35px"/> 
-								<ListItemText primary={  reacciones['0'].sad } />
-							</ListItem>
-							<ListItem>
-								<img src={Wow} widht="35px" height="35px"/> <br/>
-								<ListItemText primary={  reacciones['0'].wow }  />
-							</ListItem>
-							<ListItem>
-								<img src={Like} widht="35px" height="35px"/> <br/>
-								<ListItemText primary={ reacciones['0'].like  } />
-							</ListItem>
-							<ListItem>
-								<img src={Love} widht="35px" height="35px"/> <br/>
-								<ListItemText primary={  reacciones['0'].love  }  />
-							</ListItem>
-							<ListItem>
-								<img src={Haha} widht="35px" height="35px"/> <br/>
-								<ListItemText primary={  reacciones['0'].haha }  />
-							</ListItem>
-							<ListItem>
-								<img src={Angry} widht="35px" height="35px"/> <br/>
-								<ListItemText primary={  reacciones['0'].angry  } />
-							</ListItem>
-						</List>
+						<AppBar position="static">
+				          <Tabs value={tabActive} onChange={this._handleChangeTab}>
+				            <Tab label="General" />
+				            <Tab label="Percepción" />
+				            <Tab label="Preocupaciones" />
+				          </Tabs>
+				        </AppBar>
+				        {tabActive === 0 && 
+				        <table width="100%">
+				        	<tbody>
+				        		<tr aling="center">
+				        			<th>{'Distrito'}</th>
+				        			<th>{'municipio'}</th>
+				        			<th>{'seccion'}</th>
+				        			<th>{'Habitantes Seccion'}</th>
+				        			
+				        		</tr>
+			        			<tr aling="center">
+				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.distrito : ''}</td>
+				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.municipio : ''}</td>
+				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.seccion : ''}</td>
+				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.habitantes : ''}</td>
+			        			</tr>
+			        		</tbody>
+			        	</table>}
+				        {tabActive === 1 && 
+				        	<table width="100%">
+				        		<tbody>
+					        		<tr aling="center">
+					        			<th>{'Pan'}</th>
+					        			<th>{'Pri'}</th>
+					        			<th>{'Morena'}</th>
+					        			<th>{'Otros'}</th>
+					        			<th>{'Candidato'}</th>
+					        		</tr>
+				        			<tr aling="center">
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.pan : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.pri : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.morena : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.otros : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.candidatos : ''}</td>
+				        			</tr>
+				        		</tbody>
+				        	</table>
+				        	}
+				        {tabActive === 2 && 
+				        	<div>
+				        	<table width="100%">
+				        		<tbody>
+					        		<tr aling="center">
+					        			<th>{'#Seguridad'}</th>
+					        			<th>{'#Servicios Publicos'}</th>
+					        			<th>{'#Empleo'}</th>
+					        			<th>{'#Infraestructura urbana'}</th>
+					        		</tr>
+				        			<tr aling="center">
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.seguridad : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.servicios_publicos : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.empleo : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.infrestructura : ''}</td>
+				        			</tr>
+				        		</tbody>
+				        	</table>
+				        	<br/><br/>
+				        	<table width="100%">
+				        		<tbody>
+					        		<tr >
+					        			<th aling="center">{'#Agua'}</th>
+					        			<th aling="center">{'#Gasolina'}</th>
+					        			<th aling="center">{'#Basura'}</th>
+					        			<th aling="center">{'#varios'}</th>
+					        		</tr>
+				        			<tr >
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.agua : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.gasolina : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.basura : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.varios : ''}</td>
+				        			</tr>
+				        		</tbody>
+				        	</table>
+				        	
+				        	</div>
+				        }
 					</Paper>
 				</Grid>
-				<Grid item xs={11}>
+				<Grid item xs={8}>
+					<Grid xs={12}>
+						<paper>
+							<br/>
+							Pri<div style={{padding: '8px', background: '#aa0000', display: 'inline-block',  borderRadius: '50%' , margin : '0px 5px' , fontSize:'10px' }}></div>
+							Pan<div style={{padding: '8px', background: '#0000ff', display: 'inline-block',  borderRadius: '50%' , margin : '0px 5px'}}></div>
+							Morena<div style={{padding: '8px', background: '#aa5500', display: 'inline-block',  borderRadius: '50%', margin : '0px 5px'}}></div>
+							Pan/Morena<div style={{padding: '8px', background: '#ffff00', display: 'inline-block',  borderRadius: '50%', margin : '0px 5px'}}></div>
+							Pri/Morena<div style={{padding: '8px', background: '#000000', display: 'inline-block',  borderRadius: '50%', margin : '0px 5px'}}></div>
+							Otro<div style={{padding: '8px', background: '#005500', display: 'inline-block',  borderRadius: '50%', margin : '0px 5px'}}></div>
+						</paper>
+					</Grid>
+					<br/>
+					<Grid xs={12}>
 					<Paper className={classes.paper}>
-						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz} circulos={circulos} color={this.state.color}/>
+						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz} circulos={circulos} color={this.state.color} ref={this.myRef}/>
 					</Paper>
+					</Grid>
 				</Grid>
 				 {
 					this.state.modal_token&& 
@@ -736,6 +777,7 @@ const AppWithStyles = withStyles(styles)(App);
 
 const mapStateToProps = (state, ownProps) => ({
 	auth: state.auth,
+	secciones : state.secciones
 })
 
 const mapDispatchToProps = null;
