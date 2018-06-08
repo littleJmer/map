@@ -585,7 +585,7 @@ class App extends Component {
 				<AppBar>
 					<Toolbar>
 						<Typography variant="title" color="inherit" className={classes.flex}>
-							Nimblin
+							We Natives
 						</Typography>
 						<IconButton color="inherit" onClick={() => {
 
