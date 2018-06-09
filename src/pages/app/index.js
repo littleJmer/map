@@ -631,7 +631,7 @@ class App extends Component {
 					</Toolbar>
 				</AppBar>
 
-				<Grid item xs={4}>
+				<Grid item xs={5}>
 					<Paper style={{height: '532px'}}>
 						<AppBar position="static">
 				          <Tabs value={tabActive} onChange={this._handleChangeTab}>
@@ -654,11 +654,14 @@ class App extends Component {
 				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.distrito : ''}</td>
 				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.municipio : ''}</td>
 				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.seccion : ''}</td>
-				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.habitantes : ''}</td>
+				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.habitantes_seccion : ''}</td>
 			        			</tr>
 			        		</tbody>
 			        	</table>}
 				        {tabActive === 1 && 
+				        	<div>
+				        	<div align="center"><strong> Partidos </strong></div>
+				        	<br/><br/>
 				        	<table width="100%">
 				        		<tbody>
 					        		<tr aling="center">
@@ -666,17 +669,34 @@ class App extends Component {
 					        			<th>{'Pri'}</th>
 					        			<th>{'Morena'}</th>
 					        			<th>{'Otros'}</th>
-					        			<th>{'Candidato'}</th>
 					        		</tr>
 				        			<tr aling="center">
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.pan : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.pri : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.morena : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.otros : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.candidatos : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.p_pan : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.p_pri : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.p_morena : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.p_otros : ''}</td>
 				        			</tr>
 				        		</tbody>
 				        	</table>
+				        	<br/><br/><div align="center"><strong> Candidatos </strong></div>
+				        	<br/><br/>
+				        	<table width="100%">
+				        		<tbody>
+					        		<tr aling="center">
+					        			<th>{'Pan'}</th>
+					        			<th>{'Pri'}</th>
+					        			<th>{'Morena'}</th>
+					        			<th>{'Otros'}</th>
+					        		</tr>
+				        			<tr aling="center">
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.c_pan : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.c_pri : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.c_morena : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.c_otros : ''}</td>
+				        			</tr>
+				        		</tbody>
+				        	</table>
+				        	</div>
 				        	}
 				        {tabActive === 2 && 
 				        	<div>
@@ -692,7 +712,7 @@ class App extends Component {
 					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.seguridad : ''}</td>
 					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.servicios_publicos : ''}</td>
 					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.empleo : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.infrestructura : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.infrastructura_urbana : ''}</td>
 				        			</tr>
 				        		</tbody>
 				        	</table>
@@ -718,7 +738,7 @@ class App extends Component {
 				        }
 					</Paper>
 				</Grid>
-				<Grid item xs={8}>
+				<Grid item xs={7}>
 					<Grid xs={12}>
 						<paper>
 							<br/>
@@ -732,7 +752,7 @@ class App extends Component {
 					</Grid>
 					<br/>
 					<Grid xs={12}>
-					<Paper className={classes.paper}>
+					<Paper >
 						<Maps lat={lat} lng={long} zoom={zoom} kmz={kmz} circulos={circulos} color={this.state.color} ref={this.myRef}/>
 					</Paper>
 					</Grid>
