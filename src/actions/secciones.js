@@ -79,7 +79,7 @@ export const save = (item, callback) => {
 
 export const getInfo = (seccion) => {
 	return (dispatch) => {
-		request.get('api/seccion/'+seccion)
+		request.get('api/porcentajes/seccion/'+seccion)
 		.then(function(response)
 		{
 			console.log(response)

@@ -654,7 +654,7 @@ class App extends Component {
 				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.distrito : ''}</td>
 				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.municipio : ''}</td>
 				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.seccion : ''}</td>
-				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.habitantes : ''}</td>
+				        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.habitantes_seccion : ''}</td>
 			        			</tr>
 			        		</tbody>
 			        	</table>}
@@ -669,11 +669,11 @@ class App extends Component {
 					        			<th>{'Candidato'}</th>
 					        		</tr>
 				        			<tr aling="center">
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.pan : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.pri : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.morena : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.otros : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.candidatos : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.p_pan : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.p_pri : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.p_morena : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.p_otros : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.c_pan : ''}</td>
 				        			</tr>
 				        		</tbody>
 				        	</table>
@@ -692,7 +692,7 @@ class App extends Component {
 					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.seguridad : ''}</td>
 					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.servicios_publicos : ''}</td>
 					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.empleo : ''}</td>
-					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.infrestructura : ''}</td>
+					        			<td align="center">{this.props.secciones !== null ? this.props.secciones.data.infrastructura_urbana : ''}</td>
 				        			</tr>
 				        		</tbody>
 				        	</table>
